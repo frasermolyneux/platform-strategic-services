@@ -4,8 +4,8 @@ pool: 'Dedicated'
 
 resources:
   pipelines:
-  - pipeline: dns-config-mgmt.Validate
-    source: dns-config-mgmt.Validate
+  - pipeline: platform-strategic-services.Validate
+    source: platform-strategic-services.Validate
     trigger: true
 
 stages: 
