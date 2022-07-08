@@ -3,7 +3,7 @@ targetScope = 'resourceGroup'
 param parAppServicePlanName string
 param parLocation string
 
-resource appServicePlan 'Microsoft.Web/serverfarms@2020-10-01' = {
+resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: parAppServicePlanName
   location: parLocation
 
