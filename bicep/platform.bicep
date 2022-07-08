@@ -7,7 +7,7 @@ param parTags object
 
 // Variables
 var varAppSvcPlanResourceGroupName = 'rg-platform-plan-${parEnvironment}-${parLocation}'
-var varApimResourceGroupName = 'rg-apim-${parEnvironment}-${parLocation}'
+var varApimResourceGroupName = 'rg-platform-apim-${parEnvironment}-${parLocation}'
 var varApimName = 'apim-mx-platform-${parEnvironment}-${parLocation}'
 var varAppServicePlanName = 'plan-platform-${parEnvironment}-${parLocation}'
 
