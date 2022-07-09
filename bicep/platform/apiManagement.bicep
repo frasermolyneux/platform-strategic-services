@@ -5,7 +5,7 @@ param parApimName string
 param parLocation string
 
 // Module Resources
-resource apiManagement 'Microsoft.ApiManagement/service@2021-08-01' = {
+resource apiManagement 'Microsoft.ApiManagement/service@2021-12-01-preview' = {
   name: parApimName
   location: parLocation
 
