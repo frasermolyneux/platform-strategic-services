@@ -46,5 +46,6 @@ resource tenantLoginUrlNamedValue 'Microsoft.ApiManagement/service/namedValues@2
   }
 }
 
+// Outputs
 output outApimId string = apiManagement.id
 output outApimName string = apiManagement.name

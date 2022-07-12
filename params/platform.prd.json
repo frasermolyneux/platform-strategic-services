@@ -8,6 +8,22 @@
         "parEnvironment": {
             "value": "prd"
         },
+        "parSqlAdminUsername": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/<subscription-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>"
+                },
+                "secretName": "ExamplePassword"
+            }
+        },
+        "parSqlAdminPassword": {
+            "reference": {
+                "keyVault": {
+                    "id": "/subscriptions/<subscription-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>"
+                },
+                "secretName": "ExamplePassword"
+            }
+        },
         "parTags": {
             "value": {
                 "Environment": "prd",

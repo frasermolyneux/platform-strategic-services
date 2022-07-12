@@ -1,8 +1,10 @@
 targetScope = 'resourceGroup'
 
+// Parameters
 param parAppServicePlanName string
 param parLocation string
 
+// Module Resources
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: parAppServicePlanName
   location: parLocation
@@ -31,5 +33,6 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   }
 }
 
+// Outputs
 output outAppServicePlanId string = appServicePlan.id
 output outAppServicePlanName string = appServicePlan.name
