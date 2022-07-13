@@ -48,7 +48,12 @@ stages:
           scriptType: 'pscore'
           scriptLocation: 'inlineScript'
           inlineScript: |
-            az deployment sub what-if `
-              --template-file bicep/platform.bicep `
-              --location 'uksouth' `
-              --parameters @params/platform.prd.json
+            # Only perform what-if step if Key Vault resource group exists as Key Vault is required for Bicep parameters
+            if ((az group exists --name 'rg-platform-keyvault-prd-uksouth') -eq $true)
+            {
+              az deployment sub what-if `
+                --template-file bicep/platform.bicep `
+                --location 'uksouth' `
+                --parameters @params/platform.prd.json
+            }
+
