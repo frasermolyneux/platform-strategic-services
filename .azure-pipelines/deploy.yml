@@ -62,3 +62,15 @@ stages:
               --location 'uksouth' `
               --parameters @params/platform.prd.json `
                 parSqlAdminOid=$sqlAdminOid
+
+  - job: DeployPrdPlatformPermissions
+    dependsOn: [DeployPrdPlatformBicep]
+    steps:
+      - task: AzureCLI@2
+        displayName: CreateSqlServerRoleAssignment
+        inputs:
+          azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+          scriptType: 'pscore'
+          scriptLocation: 'scriptPath'
+          arguments: '"sql-platform-prd-uksouth" "rg-platform-sql-prd-uksouth"'
+          scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/CreateSqlServerRoleAssignment.ps1'
