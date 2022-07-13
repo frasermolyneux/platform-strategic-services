@@ -19,6 +19,7 @@ stages:
     displayName: Lint Code
     steps:
       - script: |
+          az bicep build --file bicep/platformKeyVault.bicep
           az bicep build --file bicep/platform.bicep
         name: LintBicepCode
         displayName: Run Bicep Linter
@@ -36,6 +37,11 @@ stages:
           scriptLocation: 'inlineScript'
           inlineScript: |
             az deployment sub validate `
+              --template-file bicep/platformKeyVault.bicep `
+              --location 'uksouth' `
+              --parameters @params/platformKeyVault.prd.json
+
+            az deployment sub validate `
               --template-file bicep/platform.bicep `
               --location 'uksouth' `
               --parameters @params/platform.prd.json
@@ -48,6 +54,11 @@ stages:
           scriptType: 'pscore'
           scriptLocation: 'inlineScript'
           inlineScript: |
+            az deployment sub what-if `
+              --template-file bicep/platformKeyVault.bicep `
+              --location 'uksouth' `
+              --parameters @params/platformKeyVault.prd.json
+
             # Only perform what-if step if Key Vault resource group exists as Key Vault is required for Bicep parameters
             if ((az group exists --name 'rg-platform-keyvault-prd-uksouth') -eq $true)
             {

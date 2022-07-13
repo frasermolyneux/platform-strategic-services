@@ -11,7 +11,32 @@ resources:
 stages: 
 - stage: DeployPrdPlatform
   jobs:
+  - job: DeployPrdPlatformKeyVaultBicep
+    steps:
+    - task: AzureCLI@2
+      displayName: DeployServicesBicep
+      inputs:
+        azureSubscription: $(subscription)
+        scriptType: 'pscore'
+        scriptLocation: 'inlineScript'
+        inlineScript: |
+            az deployment sub create `
+              --template-file bicep/platformKeyVault.bicep `
+              --location 'uksouth' `
+              --parameters @params/platformKeyVault.prd.json
+
+    - task: AzureCLI@2
+      displayName: SetSqlServerAdminCredentials
+      inputs:
+        azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+        scriptType: 'pscore'
+        scriptLocation: 'scriptPath'
+        arguments: '"prd" "uksouth"'
+        addSpnToEnvironment: true
+        scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/SetSqlServerAdminCredentials.ps1'
+
   - job: DeployPrdPlatformBicep
+    dependsOn: [DeployPrdPlatformKeyVaultBicep]
     steps:
       - task: AzureCLI@2
         displayName: DeployPrdPlatformBicep
