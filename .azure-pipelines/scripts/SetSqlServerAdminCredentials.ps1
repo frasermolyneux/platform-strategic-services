@@ -3,7 +3,7 @@ param (
     $location
 )
 
-$keyVaultName = "kv-platform-$environment-$location"
+$keyVaultName = "kv-mx-pltfrm-$environment-$location"
 $secretName = "sql-platform-$environment-$location-admin-password"
 
 if ($null -eq (az keyvault secret show --name $secretName)) {
