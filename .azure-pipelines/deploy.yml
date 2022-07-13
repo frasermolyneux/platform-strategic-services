@@ -55,7 +55,7 @@ stages:
           scriptType: 'pscore'
           scriptLocation: 'inlineScript'
           inlineScript: |
-            $sqlAdminOid = (az ad group show --group "sg-sql-platform-$(environment)-admins" --query 'id')  | ConvertFrom-Json
+            $sqlAdminOid = (az ad group show --group "sg-sql-platform-prd-admins" --query 'id')  | ConvertFrom-Json
 
             az deployment sub create `
               --template-file bicep/platform.bicep `
