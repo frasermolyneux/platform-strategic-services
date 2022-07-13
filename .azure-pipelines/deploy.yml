@@ -16,7 +16,7 @@ stages:
     - task: AzureCLI@2
       displayName: DeployServicesBicep
       inputs:
-        azureSubscription: $(subscription)
+        azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
         scriptType: 'pscore'
         scriptLocation: 'inlineScript'
         inlineScript: |
