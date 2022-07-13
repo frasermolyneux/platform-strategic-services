@@ -8,6 +8,9 @@
         "parEnvironment": {
             "value": "prd"
         },
+        "parDeployPrincipalId": {
+            "value": "a7347c24-972a-4218-bd97-1b0bae22a496"
+        },
         "parTags": {
             "value": {
                 "Environment": "prd",

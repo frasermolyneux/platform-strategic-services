@@ -3,6 +3,7 @@ targetScope = 'subscription'
 // Parameters
 param parLocation string
 param parEnvironment string
+param parDeployPrincipalId string
 param parTags object
 
 // Variables
@@ -26,5 +27,16 @@ module keyVault 'modules/keyVault.bicep' = {
     parKeyVaultName: varKeyVaultName
     parLocation: parLocation
     parTags: parTags
+  }
+}
+
+module keyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
+  name: 'deployPrincipalKeyVaultAccessPolicy'
+  scope: resourceGroup(keyVaultResourceGroup.name)
+
+  params: {
+    parKeyVaultName: keyVault.name
+    parPrincipalId: parDeployPrincipalId
+    parSecretsPermissions: [ 'get', 'set', 'list' ]
   }
 }

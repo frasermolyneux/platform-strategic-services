@@ -35,6 +35,16 @@ stages:
         addSpnToEnvironment: true
         scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/SetSqlServerAdminCredentials.ps1'
 
+    - task: AzureCLI@2
+      displayName: CreateDatabaseAADGroups
+      inputs:
+        azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+        scriptType: 'pscore'
+        scriptLocation: 'scriptPath'
+        arguments: '"prd"'
+        addSpnToEnvironment: true
+        scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/CreateDatabaseAADGroups.ps1'
+
   - job: DeployPrdPlatformBicep
     dependsOn: [DeployPrdPlatformKeyVaultBicep]
     steps:
@@ -45,7 +55,10 @@ stages:
           scriptType: 'pscore'
           scriptLocation: 'inlineScript'
           inlineScript: |
+            $sqlAdminOid = (az ad group show --group "sg-sql-platform-$(environment)-admins" --query 'id')  | ConvertFrom-Json
+
             az deployment sub create `
               --template-file bicep/platform.bicep `
               --location 'uksouth' `
-              --parameters @params/platform.prd.json
+              --parameters @params/platform.prd.json `
+                parSqlAdminOid=$(sqlAdminOid)

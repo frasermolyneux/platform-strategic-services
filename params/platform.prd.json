@@ -11,25 +11,17 @@
         "parSqlAdminUsername": {
             "reference": {
                 "keyVault": {
-                    "id": "/subscriptions/<subscription-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>"
+                    "id": "/subscriptions/903b6685-c12a-4703-ac54-7ec1ff15ca43/resourceGroups/rg-platform-keyvault-prd-uksouth/providers/Microsoft.KeyVault/vaults/kv-mx-pltfrm-prd-uksouth"
                 },
-                "secretName": "ExamplePassword"
+                "secretName": "sql-platform-prd-uksouth-admin-username"
             }
         },
         "parSqlAdminPassword": {
             "reference": {
                 "keyVault": {
-                    "id": "/subscriptions/<subscription-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>"
+                    "id": "/subscriptions/903b6685-c12a-4703-ac54-7ec1ff15ca43/resourceGroups/rg-platform-keyvault-prd-uksouth/providers/Microsoft.KeyVault/vaults/kv-mx-pltfrm-prd-uksouth"
                 },
-                "secretName": "ExamplePassword"
-            }
-        },
-        "parSqlAdminOid": {
-            "reference": {
-                "keyVault": {
-                    "id": "/subscriptions/<subscription-id>/resourceGroups/<rg-name>/providers/Microsoft.KeyVault/vaults/<vault-name>"
-                },
-                "secretName": "ExamplePassword"
+                "secretName": "sql-platform-prd-uksouth-admin-password"
             }
         },
         "parTags": {
