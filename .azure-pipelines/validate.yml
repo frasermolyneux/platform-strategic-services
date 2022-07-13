@@ -46,7 +46,7 @@ stages:
               --location 'uksouth' `
               --parameters @params/platformKeyVault.prd.json
 
-            if (${{ parameters.skipBicepValidate }} -eq $false)
+            if ('${{ parameters.skipBicepValidate }}' -eq $false)
             {
               az deployment sub validate `
                 --template-file bicep/platform.bicep `
@@ -67,7 +67,7 @@ stages:
               --location 'uksouth' `
               --parameters @params/platformKeyVault.prd.json
 
-            if (${{ parameters.skipBicepValidate }} -eq $false)
+            if ('${{ parameters.skipBicepValidate }}' -eq $false)
             {
               az deployment sub what-if `
                 --template-file bicep/platform.bicep `
