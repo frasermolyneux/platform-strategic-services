@@ -41,10 +41,14 @@ stages:
               --location 'uksouth' `
               --parameters @params/platformKeyVault.prd.json
 
-            az deployment sub validate `
-              --template-file bicep/platform.bicep `
-              --location 'uksouth' `
-              --parameters @params/platform.prd.json
+            # Only perform validate step if Key Vault resource group exists as Key Vault is required for Bicep parameters
+            if ((az group exists --name 'rg-platform-keyvault-prd-uksouth') -eq $true)
+            {
+              az deployment sub validate `
+                --template-file bicep/platform.bicep `
+                --location 'uksouth' `
+                --parameters @params/platform.prd.json
+            }
 
       - task: AzureCLI@2
         name: RunWhatIfDeploy
