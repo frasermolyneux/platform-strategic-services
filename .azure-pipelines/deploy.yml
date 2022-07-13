@@ -61,4 +61,4 @@ stages:
               --template-file bicep/platform.bicep `
               --location 'uksouth' `
               --parameters @params/platform.prd.json `
-                parSqlAdminOid=$(sqlAdminOid)
+                parSqlAdminOid=$sqlAdminOid
