@@ -1,6 +1,6 @@
 parameters:
 - name: skipBicepValidate
-  type: bool
+  type: boolean
   default: false
 
 trigger:
