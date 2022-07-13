@@ -35,7 +35,7 @@ module keyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
   scope: resourceGroup(keyVaultResourceGroup.name)
 
   params: {
-    parKeyVaultName: keyVault.name
+    parKeyVaultName: keyVault.outputs.outKeyVaultName
     parPrincipalId: parDeployPrincipalId
     parSecretsPermissions: [ 'get', 'set', 'list' ]
   }
