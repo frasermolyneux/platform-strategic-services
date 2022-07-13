@@ -6,7 +6,7 @@ param parEnvironment string
 param parTags object
 
 // Variables
-var varKeyVaultName = 'kv-mx-platform-${parEnvironment}-${parLocation}'
+var varKeyVaultName = 'kv-mx-pltfrm-${parEnvironment}-${parLocation}'
 var varKeyVaultResourceGroupName = 'rg-platform-keyvault-${parEnvironment}-${parLocation}'
 
 // Module Resources
