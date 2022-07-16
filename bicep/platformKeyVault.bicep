@@ -7,6 +7,7 @@ param parDeployPrincipalId string
 param parTags object
 
 // Variables
+var varDeploymentPrefix = 'strategicKeyVault' //Prevent deployment naming conflicts
 var varKeyVaultName = 'kv-mx-pltfrm-${parEnvironment}-${parLocation}'
 var varKeyVaultResourceGroupName = 'rg-platform-keyvault-${parEnvironment}-${parLocation}'
 
@@ -20,7 +21,7 @@ resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' =
 }
 
 module keyVault 'modules/keyVault.bicep' = {
-  name: 'keyVault'
+  name: '${varDeploymentPrefix}-keyVault'
   scope: resourceGroup(keyVaultResourceGroup.name)
 
   params: {
@@ -31,7 +32,7 @@ module keyVault 'modules/keyVault.bicep' = {
 }
 
 module keyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
-  name: 'deployPrincipalKeyVaultAccessPolicy'
+  name: '${varDeploymentPrefix}-keyVaultAccessPolicy'
   scope: resourceGroup(keyVaultResourceGroup.name)
 
   params: {

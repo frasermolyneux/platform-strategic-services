@@ -12,6 +12,7 @@ param parSqlAdminPassword string
 param parSqlAdminOid string
 
 // Variables
+var varDeploymentPrefix = 'strategicPlatform' //Prevent deployment naming conflicts
 var varAppSvcPlanResourceGroupName = 'rg-platform-webapps-${parEnvironment}-${parLocation}'
 var varApimResourceGroupName = 'rg-platform-apim-${parEnvironment}-${parLocation}'
 var varSqlResourceGroupName = 'rg-platform-sql-${parEnvironment}-${parLocation}'
@@ -45,7 +46,7 @@ resource sqlResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 }
 
 module apiManagment 'platform/apiManagement.bicep' = {
-  name: 'apiManagement'
+  name: '${varDeploymentPrefix}-apiManagement'
   scope: resourceGroup(apimResourceGroup.name)
 
   params: {
@@ -55,7 +56,7 @@ module apiManagment 'platform/apiManagement.bicep' = {
 }
 
 module appServicePlan 'platform/appServicePlan.bicep' = {
-  name: 'appServicePlan'
+  name: '${varDeploymentPrefix}-appServicePlan'
   scope: resourceGroup(appSvcPlanResourceGroup.name)
 
   params: {
@@ -65,7 +66,7 @@ module appServicePlan 'platform/appServicePlan.bicep' = {
 }
 
 module sqlServer 'platform/sqlServer.bicep' = {
-  name: 'sqlServer'
+  name: '${varDeploymentPrefix}-sqlServer'
   scope: resourceGroup(sqlResourceGroup.name)
 
   params: {
