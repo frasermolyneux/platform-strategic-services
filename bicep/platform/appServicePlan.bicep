@@ -10,7 +10,7 @@ resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   location: parLocation
 
   sku: {
-    name: 'P1v2'
+    name: 'P1v3'
     tier: 'Premium'
     size: 'P1'
     family: 'P'
