@@ -6,7 +6,9 @@ parameters:
 trigger:
   branches:
     include:
-    - '*'
+    - main
+    - feature/*
+    - dependabot/*
 
 schedules:
   - cron: "0 3 * * 0"
@@ -29,51 +31,53 @@ stages:
         name: LintBicepCode
         displayName: Run Bicep Linter
 
-  - job: ValidateBicepCode
+  - deployment: ValidateBicepCode
     dependsOn: [LintCode]
-    displayName: Validate Bicep Code
-    steps:
-      - task: AzureCLI@2
-        name: RunPreflightValidation
-        displayName: Run Preflight Validation
-        inputs:
-          azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
-          scriptType: 'pscore'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            az deployment sub validate `
-              --template-file bicep/platformKeyVault.bicep `
-              --location 'uksouth' `
-              --parameters @params/platformKeyVault.prd.json
+    environment: 'platform-strategic-services'
 
-            if ('${{ parameters.skipBicepValidate }}' -eq $false)
-            {
-              az deployment sub validate `
-                --template-file bicep/platform.bicep `
-                --location 'uksouth' `
-                --parameters @params/platform.prd.json `
-                  parSqlAdminOid='00000000-0000-0000-0000-000000000000'
-            }
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: AzureCLI@2
+              name: RunPreflightValidation
+              inputs:
+                azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az deployment sub validate `
+                    --template-file bicep/platformKeyVault.bicep `
+                    --location 'uksouth' `
+                    --parameters @params/platformKeyVault.prd.json
 
-      - task: AzureCLI@2
-        name: RunWhatIfDeploy
-        displayName: Run What-If Deploy
-        inputs:
-          azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
-          scriptType: 'pscore'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            az deployment sub what-if `
-              --template-file bicep/platformKeyVault.bicep `
-              --location 'uksouth' `
-              --parameters @params/platformKeyVault.prd.json
+                  if ('${{ parameters.skipBicepValidate }}' -eq $false)
+                  {
+                    az deployment sub validate `
+                      --template-file bicep/platform.bicep `
+                      --location 'uksouth' `
+                      --parameters @params/platform.prd.json `
+                        parSqlAdminOid='00000000-0000-0000-0000-000000000000'
+                  }
 
-            if ('${{ parameters.skipBicepValidate }}' -eq $false)
-            {
-              az deployment sub what-if `
-                --template-file bicep/platform.bicep `
-                --location 'uksouth' `
-                --parameters @params/platform.prd.json `
-                  parSqlAdminOid='00000000-0000-0000-0000-000000000000'
-            }
+            - task: AzureCLI@2
+              name: RunWhatIfDeploy
+              inputs:
+                azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az deployment sub what-if `
+                    --template-file bicep/platformKeyVault.bicep `
+                    --location 'uksouth' `
+                    --parameters @params/platformKeyVault.prd.json
+
+                  if ('${{ parameters.skipBicepValidate }}' -eq $false)
+                  {
+                    az deployment sub what-if `
+                      --template-file bicep/platform.bicep `
+                      --location 'uksouth' `
+                      --parameters @params/platform.prd.json `
+                        parSqlAdminOid='00000000-0000-0000-0000-000000000000'
+                  }
 

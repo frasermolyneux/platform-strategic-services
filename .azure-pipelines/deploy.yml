@@ -6,62 +6,76 @@ resources:
   pipelines:
   - pipeline: platform-strategic-services.Validate
     source: platform-strategic-services.Validate
-    trigger: true
+    trigger:
+      branches:
+        include:
+        - main
 
 stages: 
 - stage: DeployPrdPlatform
   jobs:
-  - job: DeployPrdPlatformKeyVaultBicep
-    steps:
-    - task: AzureCLI@2
-      displayName: DeployServicesBicep
-      inputs:
-        azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
-        scriptType: 'pscore'
-        scriptLocation: 'inlineScript'
-        inlineScript: |
-            az deployment sub create `
-              --template-file bicep/platformKeyVault.bicep `
-              --location 'uksouth' `
-              --parameters @params/platformKeyVault.prd.json
 
-    - task: AzureCLI@2
-      displayName: SetSqlServerAdminCredentials
-      inputs:
-        azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
-        scriptType: 'pscore'
-        scriptLocation: 'scriptPath'
-        arguments: '"prd" "uksouth"'
-        addSpnToEnvironment: true
-        scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/SetSqlServerAdminCredentials.ps1'
+  - deployment: DeployPrdPlatformKeyVaultBicep
+    environment: 'platform-strategic-services'
 
-    - task: AzureCLI@2
-      displayName: CreateDatabaseAADGroups
-      inputs:
-        azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
-        scriptType: 'pscore'
-        scriptLocation: 'scriptPath'
-        arguments: '"prd"'
-        addSpnToEnvironment: true
-        scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/CreateDatabaseAADGroups.ps1'
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: AzureCLI@2
+              displayName: DeployServicesBicep
+              inputs:
+                azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                    az deployment sub create `
+                      --template-file bicep/platformKeyVault.bicep `
+                      --location 'uksouth' `
+                      --parameters @params/platformKeyVault.prd.json
 
-  - job: DeployPrdPlatformBicep
+            - task: AzureCLI@2
+              displayName: SetSqlServerAdminCredentials
+              inputs:
+                azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+                scriptType: 'pscore'
+                scriptLocation: 'scriptPath'
+                arguments: '"prd" "uksouth"'
+                addSpnToEnvironment: true
+                scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/SetSqlServerAdminCredentials.ps1'
+
+            - task: AzureCLI@2
+              displayName: CreateDatabaseAADGroups
+              inputs:
+                azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+                scriptType: 'pscore'
+                scriptLocation: 'scriptPath'
+                arguments: '"prd"'
+                addSpnToEnvironment: true
+                scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/CreateDatabaseAADGroups.ps1'
+
+  - deployment: DeployPrdPlatformBicep
     dependsOn: [DeployPrdPlatformKeyVaultBicep]
-    steps:
-      - task: AzureCLI@2
-        displayName: DeployPrdPlatformBicep
-        inputs:
-          azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
-          scriptType: 'pscore'
-          scriptLocation: 'inlineScript'
-          inlineScript: |
-            $sqlAdminOid = (az ad group show --group "sg-sql-platform-prd-admins" --query 'id')  | ConvertFrom-Json
+    environment: 'platform-strategic-services'
 
-            az deployment sub create `
-              --template-file bicep/platform.bicep `
-              --location 'uksouth' `
-              --parameters @params/platform.prd.json `
-                parSqlAdminOid=$sqlAdminOid
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - task: AzureCLI@2
+              displayName: DeployPrdPlatformBicep
+              inputs:
+                azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  $sqlAdminOid = (az ad group show --group "sg-sql-platform-prd-admins" --query 'id')  | ConvertFrom-Json
+
+                  az deployment sub create `
+                    --template-file bicep/platform.bicep `
+                    --location 'uksouth' `
+                    --parameters @params/platform.prd.json `
+                      parSqlAdminOid=$sqlAdminOid
 
   - job: DeployPrdPlatformPermissions
     dependsOn: [DeployPrdPlatformBicep]
