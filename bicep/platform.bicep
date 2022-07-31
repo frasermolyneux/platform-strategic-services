@@ -89,7 +89,7 @@ module sqlServer 'platform/sqlServer.bicep' = {
 }
 
 module containerRegistry 'modules/containerRegistry.bicep' = {
-  name: '${varDeploymentPrefix}-appServicePlan'
+  name: '${varDeploymentPrefix}-containerRegistry'
   scope: resourceGroup(acrResourceGroup.name)
 
   params: {
