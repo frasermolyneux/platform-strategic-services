@@ -16,9 +16,11 @@ var varDeploymentPrefix = 'strategicPlatform' //Prevent deployment naming confli
 var varAppSvcPlanResourceGroupName = 'rg-platform-webapps-${parEnvironment}-${parLocation}'
 var varApimResourceGroupName = 'rg-platform-apim-${parEnvironment}-${parLocation}'
 var varSqlResourceGroupName = 'rg-platform-sql-${parEnvironment}-${parLocation}'
+var varAcrResourceGroupName = 'rg-platform-acr-${parEnvironment}-${parLocation}'
 
 var varApimName = 'apim-mx-platform-${parEnvironment}-${parLocation}'
 var varAppServicePlanName = 'plan-platform-${parEnvironment}-${parLocation}'
+var varAcrName = 'acrmxplatform${parEnvironment}${parLocation}'
 
 // Platform
 resource appSvcPlanResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -39,6 +41,14 @@ resource apimResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
 
 resource sqlResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: varSqlResourceGroupName
+  location: parLocation
+  tags: parTags
+
+  properties: {}
+}
+
+resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+  name: varAcrResourceGroupName
   location: parLocation
   tags: parTags
 
@@ -75,5 +85,17 @@ module sqlServer 'platform/sqlServer.bicep' = {
     parSqlAdminUsername: parSqlAdminUsername
     parSqlAdminPassword: parSqlAdminPassword
     parAdminGroupOid: parSqlAdminOid
+  }
+}
+
+module containerRegistry 'modules/containerRegistry.bicep' = {
+  name: '${varDeploymentPrefix}-containerRegistry'
+  scope: resourceGroup(acrResourceGroup.name)
+
+  params: {
+    parAcrName: varAcrName
+    parLocation: parLocation
+    parAcrSku: 'Basic'
+    parTags: parTags
   }
 }
