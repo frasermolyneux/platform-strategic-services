@@ -67,3 +67,14 @@ module keyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
     parSecretsPermissions: [ 'get', 'set', 'list' ]
   }
 }
+
+module nugetKeyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
+  name: '${varDeploymentPrefix}-nugetKeyVaultAccessPolicy'
+  scope: resourceGroup(keyVaultResourceGroup.name)
+
+  params: {
+    parKeyVaultName: nugetKeyVault.outputs.outKeyVaultName
+    parPrincipalId: parDeployPrincipalId
+    parSecretsPermissions: [ 'get', 'list' ]
+  }
+}
