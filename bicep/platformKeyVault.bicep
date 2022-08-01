@@ -4,6 +4,10 @@ targetScope = 'subscription'
 param parLocation string
 param parEnvironment string
 param parDeployPrincipalId string
+
+param parPlatformKeyVaultCreateMode string = 'recover'
+param parNugetKeyVaultCreateMode string = 'recover'
+
 param parTags object
 
 // Variables
@@ -28,6 +32,13 @@ module keyVault 'modules/keyVault.bicep' = {
   params: {
     parKeyVaultName: varKeyVaultName
     parLocation: parLocation
+
+    parKeyVaultCreateMode: parPlatformKeyVaultCreateMode
+    parEnabledForDeployment: true
+    parEnabledForTemplateDeployment: true
+
+    parSoftDeleteRetentionInDays: 30
+
     parTags: parTags
   }
 }
@@ -39,6 +50,9 @@ module nugetKeyVault 'modules/keyVault.bicep' = {
   params: {
     parKeyVaultName: varNugetKeyVaultName
     parLocation: parLocation
+
+    parKeyVaultCreateMode: parNugetKeyVaultCreateMode
+
     parTags: parTags
   }
 }
