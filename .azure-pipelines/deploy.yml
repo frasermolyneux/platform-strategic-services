@@ -24,7 +24,7 @@ stages:
         deploy:
           steps:
             - task: AzureCLI@2
-              displayName: DeployServicesBicep
+              displayName: DeployPrdPlatformKeyVaultBicep
               inputs:
                 azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
                 scriptType: 'pscore'
