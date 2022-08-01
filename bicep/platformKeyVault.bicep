@@ -9,6 +9,7 @@ param parTags object
 // Variables
 var varDeploymentPrefix = 'strategicKeyVault' //Prevent deployment naming conflicts
 var varKeyVaultName = 'kv-mx-pltfrm-${parEnvironment}-${parLocation}'
+var varNugetKeyVaultName = 'kv-mx-nuget-${parEnvironment}-${parLocation}'
 var varKeyVaultResourceGroupName = 'rg-platform-keyvault-${parEnvironment}-${parLocation}'
 
 // Module Resources
@@ -26,6 +27,17 @@ module keyVault 'modules/keyVault.bicep' = {
 
   params: {
     parKeyVaultName: varKeyVaultName
+    parLocation: parLocation
+    parTags: parTags
+  }
+}
+
+module nugetKeyVault 'modules/keyVault.bicep' = {
+  name: '${varDeploymentPrefix}-nugetKeyVault'
+  scope: resourceGroup(keyVaultResourceGroup.name)
+
+  params: {
+    parKeyVaultName: varNugetKeyVaultName
     parLocation: parLocation
     parTags: parTags
   }
