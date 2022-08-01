@@ -5,8 +5,6 @@ parameters:
   values:
   - 'recover'
   - 'default'
-
-parameters:
 - name: nugetKeyVaultCreateMode
   type: string
   default: recover
