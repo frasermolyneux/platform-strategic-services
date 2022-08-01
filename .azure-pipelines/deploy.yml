@@ -48,8 +48,8 @@ stages:
                       --template-file bicep/platformKeyVault.bicep `
                       --location 'uksouth' `
                       --parameters @params/platformKeyVault.prd.json `
-                        parPlatformKeyVaultCreateMode '${{ parameters.platformKeyVaultCreateMode }}' `
-                        parNugetKeyVaultCreateMode '${{ parameters.nugetKeyVaultCreateMode }}'
+                        parPlatformKeyVaultCreateMode='${{ parameters.platformKeyVaultCreateMode }}' `
+                        parNugetKeyVaultCreateMode='${{ parameters.nugetKeyVaultCreateMode }}'
 
             - task: AzureCLI@2
               displayName: SetSqlServerAdminCredentials
