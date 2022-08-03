@@ -73,7 +73,7 @@ module nugetKeyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = if (parE
   scope: resourceGroup(keyVaultResourceGroup.name)
 
   params: {
-    parKeyVaultName: nugetKeyVault.outputs.outKeyVaultName
+    parKeyVaultName: (parEnvironment == 'prd') ? nugetKeyVault.outputs.outKeyVaultName : ''
     parPrincipalId: parDeployPrincipalId
     parSecretsPermissions: [ 'get', 'list' ]
   }
