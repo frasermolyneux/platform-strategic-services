@@ -43,7 +43,7 @@ module keyVault 'modules/keyVault.bicep' = {
   }
 }
 
-module nugetKeyVault 'modules/keyVault.bicep' = {
+module nugetKeyVault 'modules/keyVault.bicep' = if (parEnvironment == 'prd') {
   name: '${varDeploymentPrefix}-nugetKeyVault'
   scope: resourceGroup(keyVaultResourceGroup.name)
 
@@ -68,7 +68,7 @@ module keyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
   }
 }
 
-module nugetKeyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
+module nugetKeyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = if (parEnvironment == 'prd') {
   name: '${varDeploymentPrefix}-nugetKeyVaultAccessPolicy'
   scope: resourceGroup(keyVaultResourceGroup.name)
 

@@ -6,39 +6,39 @@
             "value": "uksouth"
         },
         "parEnvironment": {
-            "value": "prd"
+            "value": "dev"
         },
         "parAppServicePlanSkuName": {
-            "value": "P1v3"
+            "value": "B3"
         },
         "parAppServicePlanSkuTier": {
-            "value": "Premium"
+            "value": "Basic"
         },
         "parAppServicePlanSkuSize": {
-            "value": "P1"
+            "value": "B3"
         },
         "parAppServicePlanSkuFamily": {
-            "value": "P"
+            "value": "B"
         },
         "parSqlAdminUsername": {
             "reference": {
                 "keyVault": {
-                    "id": "/subscriptions/903b6685-c12a-4703-ac54-7ec1ff15ca43/resourceGroups/rg-platform-keyvault-prd-uksouth/providers/Microsoft.KeyVault/vaults/kv-mx-pltfrm-prd-uksouth"
+                    "id": "/subscriptions/903b6685-c12a-4703-ac54-7ec1ff15ca43/resourceGroups/rg-platform-keyvault-dev-uksouth/providers/Microsoft.KeyVault/vaults/kv-mx-pltfrm-dev-uksouth"
                 },
-                "secretName": "sql-platform-prd-uksouth-admin-username"
+                "secretName": "sql-platform-dev-uksouth-admin-username"
             }
         },
         "parSqlAdminPassword": {
             "reference": {
                 "keyVault": {
-                    "id": "/subscriptions/903b6685-c12a-4703-ac54-7ec1ff15ca43/resourceGroups/rg-platform-keyvault-prd-uksouth/providers/Microsoft.KeyVault/vaults/kv-mx-pltfrm-prd-uksouth"
+                    "id": "/subscriptions/903b6685-c12a-4703-ac54-7ec1ff15ca43/resourceGroups/rg-platform-keyvault-dev-uksouth/providers/Microsoft.KeyVault/vaults/kv-mx-pltfrm-dev-uksouth"
                 },
-                "secretName": "sql-platform-prd-uksouth-admin-password"
+                "secretName": "sql-platform-dev-uksouth-admin-password"
             }
         },
         "parTags": {
             "value": {
-                "Environment": "prd",
+                "Environment": "dev",
                 "DeployedBy": "AzDo-Bicep",
                 "Git": "https://github.com/frasermolyneux/platform-strategic-services"
             }

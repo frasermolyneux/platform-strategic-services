@@ -4,17 +4,23 @@ targetScope = 'resourceGroup'
 param parAppServicePlanName string
 param parLocation string
 
+param parSkuName string = 'P1v3'
+param parSkuTier string = 'Premium'
+param parSkuSize string = 'P1'
+param parSkuFamily string = 'P'
+param parSkuCapacity int = 1
+
 // Module Resources
 resource appServicePlan 'Microsoft.Web/serverfarms@2021-03-01' = {
   name: parAppServicePlanName
   location: parLocation
 
   sku: {
-    name: 'P1v3'
-    tier: 'Premium'
-    size: 'P1'
-    family: 'P'
-    capacity: 1
+    name: parSkuName
+    tier: parSkuTier
+    size: parSkuSize
+    family: parSkuFamily
+    capacity: parSkuCapacity
   }
 
   kind: 'linux'

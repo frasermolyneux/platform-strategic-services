@@ -3,13 +3,19 @@ targetScope = 'subscription'
 // Parameters
 param parLocation string
 param parEnvironment string
-param parTags object
 
 @secure()
 param parSqlAdminUsername string
 @secure()
 param parSqlAdminPassword string
 param parSqlAdminOid string
+
+param parAppServicePlanSkuName string
+param parAppServicePlanSkuTier string
+param parAppServicePlanSkuSize string
+param parAppServicePlanSkuFamily string
+
+param parTags object
 
 // Variables
 var varDeploymentPrefix = 'strategicPlatform' //Prevent deployment naming conflicts
@@ -47,7 +53,7 @@ resource sqlResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   properties: {}
 }
 
-resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
+resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = if (parEnvironment == 'prd') {
   name: varAcrResourceGroupName
   location: parLocation
   tags: parTags
@@ -72,6 +78,10 @@ module appServicePlan 'platform/appServicePlan.bicep' = {
   params: {
     parAppServicePlanName: varAppServicePlanName
     parLocation: parLocation
+    parSkuName: parAppServicePlanSkuName
+    parSkuTier: parAppServicePlanSkuTier
+    parSkuSize: parAppServicePlanSkuSize
+    parSkuFamily: parAppServicePlanSkuFamily
   }
 }
 
@@ -88,7 +98,7 @@ module sqlServer 'platform/sqlServer.bicep' = {
   }
 }
 
-module containerRegistry 'modules/containerRegistry.bicep' = {
+module containerRegistry 'modules/containerRegistry.bicep' = if (parEnvironment == 'prd') {
   name: '${varDeploymentPrefix}-containerRegistry'
   scope: resourceGroup(acrResourceGroup.name)
 

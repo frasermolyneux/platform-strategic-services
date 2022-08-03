@@ -36,7 +36,7 @@ stages:
         name: LintBicepCode
         displayName: Run Bicep Linter
         inputs:
-          azureSubscription: 'spn-ado-Personal-Public-strategic-prd'
+          azureSubscription: 'spn-ado-Personal-Public-devtest'
           scriptType: 'pscore'
           scriptLocation: 'inlineScript'
           inlineScript: |
@@ -47,9 +47,65 @@ stages:
               az bicep build --file $file.FullName --stdout
             }
 
-  - deployment: ValidateBicepCode
+  - deployment: ValidateBicepCodeForDev
     dependsOn: [LintCode]
-    environment: 'platform-strategic-services'
+    environment: 'platform-strategic-services-dev'
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+            
+            - task: AzureCLI@2
+              name: RunPreflightValidation
+              inputs:
+                azureSubscription: 'spn-ado-Personal-Public-devtest'
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az deployment sub validate `
+                    --template-file bicep/platformKeyVault.bicep `
+                    --location 'uksouth' `
+                    --parameters @params/platformKeyVault.dev.json `
+                        parPlatformKeyVaultCreateMode='recover' `
+                        parNugetKeyVaultCreateMode='recover'
+
+                  if ('${{ parameters.skipBicepValidate }}' -eq $false)
+                  {
+                    az deployment sub validate `
+                      --template-file bicep/platform.bicep `
+                      --location 'uksouth' `
+                      --parameters @params/platform.dev.json `
+                        parSqlAdminOid='00000000-0000-0000-0000-000000000000'
+                  }
+
+            - task: AzureCLI@2
+              name: RunWhatIfDeploy
+              inputs:
+                azureSubscription: 'spn-ado-Personal-Public-devtest'
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  az deployment sub what-if `
+                    --template-file bicep/platformKeyVault.bicep `
+                    --location 'uksouth' `
+                    --parameters @params/platformKeyVault.dev.json `
+                        parPlatformKeyVaultCreateMode='recover' `
+                        parNugetKeyVaultCreateMode='recover'
+
+                  if ('${{ parameters.skipBicepValidate }}' -eq $false)
+                  {
+                    az deployment sub what-if `
+                      --template-file bicep/platform.bicep `
+                      --location 'uksouth' `
+                      --parameters @params/platform.dev.json `
+                        parSqlAdminOid='00000000-0000-0000-0000-000000000000'
+                  }
+
+  - deployment: ValidateBicepCodeForPrd
+    dependsOn: [LintCode]
+    environment: 'platform-strategic-services-prd'
 
     strategy:
       runOnce:
@@ -102,4 +158,3 @@ stages:
                       --parameters @params/platform.prd.json `
                         parSqlAdminOid='00000000-0000-0000-0000-000000000000'
                   }
-
