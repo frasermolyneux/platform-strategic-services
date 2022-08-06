@@ -1,0 +1,96 @@
+parameters:
+- name: azureSubscription
+  type: string
+- name: environmentFriendlyName
+  type: string
+- name: environment
+  type: string
+
+stages:
+- stage: Deploy${{ parameters.environmentFriendlyName }}
+  jobs:
+  - deployment: Deploy${{ parameters.environmentFriendlyName }}PlatformKeyVaultBicep
+    environment: 'platform-strategic-services-${{ parameters.environment }}'
+
+    workspace:
+      clean: all
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+
+            - task: AzureCLI@2
+              displayName: Deploy${{ parameters.environmentFriendlyName }}PlatformKeyVaultBicep
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environment }}-uksouth')) { $platformKeyVaultCreateMode = 'default' } else { $platformKeyVaultCreateMode = 'recover' }
+                  if ($null -eq (az keyvault show --name 'kv-mx-nuget-${{ parameters.environment }}-uksouth')) { $nugetKeyVaultCreateMode = 'default' } else { $nugetKeyVaultCreateMode = 'recover' }
+
+                  az deployment sub create `
+                    --template-file bicep/platformKeyVault.bicep `
+                    --location 'uksouth' `
+                    --parameters @params/platformKeyVault.${{ parameters.environment }}.json `
+                      parPlatformKeyVaultCreateMode=$platformKeyVaultCreateMode `
+                      parNugetKeyVaultCreateMode=$nugetKeyVaultCreateMode
+
+  - job: Deploy${{ parameters.environmentFriendlyName }}PlatformKeyVaultScripts
+    dependsOn: ['Deploy${{ parameters.environmentFriendlyName }}PlatformKeyVaultBicep']
+
+    workspace:
+      clean: all
+
+    steps:
+      - checkout: self
+
+      - task: AzureCLI@2
+        displayName: SetSqlServerAdminCredentials
+        inputs:
+          azureSubscription: ${{ parameters.azureSubscription }}
+          scriptType: 'pscore'
+          scriptLocation: 'scriptPath'
+          arguments: '"${{ parameters.environment }}" "uksouth"'
+          addSpnToEnvironment: true
+          scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/SetSqlServerAdminCredentials.ps1'
+
+      - task: AzureCLI@2
+        displayName: CreateDatabaseAADGroups
+        inputs:
+          azureSubscription: ${{ parameters.azureSubscription }}
+          scriptType: 'pscore'
+          scriptLocation: 'scriptPath'
+          arguments: '"${{ parameters.environment }}"'
+          addSpnToEnvironment: true
+          scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/CreateDatabaseAADGroups.ps1'
+
+  - deployment: Deploy${{ parameters.environmentFriendlyName }}PlatformBicep
+    dependsOn: ['Deploy${{ parameters.environmentFriendlyName }}PlatformKeyVaultScripts']
+    environment: 'platform-strategic-services-${{ parameters.environment }}'
+
+    workspace:
+      clean: all
+
+    strategy:
+      runOnce:
+        deploy:
+          steps:
+            - checkout: self
+
+            - task: AzureCLI@2
+              displayName: Deploy${{ parameters.environmentFriendlyName }}ServicesBicep
+              inputs:
+                azureSubscription: ${{ parameters.azureSubscription }}
+                scriptType: 'pscore'
+                scriptLocation: 'inlineScript'
+                inlineScript: |
+                  $sqlAdminOid = (az ad group show --group "sg-sql-platform-${{ parameters.environment }}-admins" --query 'id')  | ConvertFrom-Json
+
+                  az deployment sub create `
+                    --template-file bicep/platform.bicep `
+                    --location 'uksouth' `
+                    --parameters @params/platform.${{ parameters.environment }}.json `
+                      parSqlAdminOid=$sqlAdminOid
