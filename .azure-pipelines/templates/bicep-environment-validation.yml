@@ -1,7 +1,4 @@
 parameters:
-- name: jobName
-  type: string
-  default: BicepEnvironmentValidation
 - name: dependsOn
   type: object
   default: []
@@ -9,11 +6,15 @@ parameters:
   type: string
 - name: environment
   type: string
+- name: environmentName
+  type: string
+- name: environmentTag
+  type: string
 
 jobs:
-- deployment: ${{ parameters.jobName }}
+- deployment: ValidateBicepAgainst${{ parameters.environmentName }}Environment
   dependsOn: ${{ parameters.dependsOn }}
-  environment: 'platform-strategic-services-${{ parameters.environment }}'
+  environment: ${{ parameters.environment }}
 
   workspace:
     clean: all
@@ -34,17 +35,17 @@ jobs:
                 az deployment sub validate `
                   --template-file bicep/platformKeyVault.bicep `
                   --location 'uksouth' `
-                  --parameters @params/platformKeyVault.${{ parameters.environment }}.json `
+                  --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
                       parPlatformKeyVaultCreateMode='recover' `
                       parNugetKeyVaultCreateMode='recover'
 
-                if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environment }}-uksouth')) { $skipBicepValidate = $true }
+                if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environmentTag }}-uksouth')) { $skipBicepValidate = $true }
 
                 if ($skipBicepValidate -ne $true) { 
                   az deployment sub validate `
                     --template-file bicep/platform.bicep `
                     --location 'uksouth' `
-                    --parameters @params/platform.${{ parameters.environment }}.json `
+                    --parameters @params/platform.${{ parameters.environmentTag }}.json `
                       parSqlAdminOid='00000000-0000-0000-0000-000000000000'
                 }
 
@@ -58,16 +59,16 @@ jobs:
                 az deployment sub what-if `
                   --template-file bicep/platformKeyVault.bicep `
                   --location 'uksouth' `
-                  --parameters @params/platformKeyVault.${{ parameters.environment }}.json `
+                  --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
                       parPlatformKeyVaultCreateMode='recover' `
                       parNugetKeyVaultCreateMode='recover'
 
-                if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environment }}-uksouth')) { $skipBicepValidate = $true }
+                if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environmentTag }}-uksouth')) { $skipBicepValidate = $true }
                 
                 if ($skipBicepValidate -ne $true) { 
                   az deployment sub what-if `
                     --template-file bicep/platform.bicep `
                     --location 'uksouth' `
-                    --parameters @params/platform.${{ parameters.environment }}.json `
+                    --parameters @params/platform.${{ parameters.environmentTag }}.json `
                       parSqlAdminOid='00000000-0000-0000-0000-000000000000'
                 }
