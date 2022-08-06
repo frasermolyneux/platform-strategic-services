@@ -38,7 +38,7 @@ jobs:
                       parPlatformKeyVaultCreateMode='recover' `
                       parNugetKeyVaultCreateMode='recover'
 
-                if ($null -ne (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environment }}-uksouth') -and $null -ne (az keyvault show --name 'kv-mx-nuget-${{ parameters.environment }}-uksouth')) { 
+                if (($null -ne (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environment }}-uksouth')) -and ($null -ne (az keyvault show --name 'kv-mx-nuget-${{ parameters.environment }}-uksouth'))) { 
                   az deployment sub validate `
                     --template-file bicep/platform.bicep `
                     --location 'uksouth' `
@@ -60,7 +60,7 @@ jobs:
                       parPlatformKeyVaultCreateMode='recover' `
                       parNugetKeyVaultCreateMode='recover'
 
-                if ($null -ne (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environment }}-uksouth') -and $null -ne (az keyvault show --name 'kv-mx-nuget-${{ parameters.environment }}-uksouth')) {
+                if (($null -ne (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environment }}-uksouth')) -and ($null -ne (az keyvault show --name 'kv-mx-nuget-${{ parameters.environment }}-uksouth'))) { 
                   az deployment sub what-if `
                     --template-file bicep/platform.bicep `
                     --location 'uksouth' `
