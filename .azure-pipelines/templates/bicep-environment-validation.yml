@@ -33,6 +33,7 @@ jobs:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az deployment sub validate `
+                  --name 'strategicKeyVault${{ parameters.environmentName }}' `
                   --template-file bicep/platformKeyVault.bicep `
                   --location 'uksouth' `
                   --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
@@ -43,6 +44,7 @@ jobs:
 
                 if ($skipBicepValidate -ne $true) { 
                   az deployment sub validate `
+                    --name 'strategicPlatform${{ parameters.environmentName }}' `
                     --template-file bicep/platform.bicep `
                     --location 'uksouth' `
                     --parameters @params/platform.${{ parameters.environmentTag }}.json `
@@ -57,6 +59,7 @@ jobs:
               scriptLocation: 'inlineScript'
               inlineScript: |
                 az deployment sub what-if `
+                  --name 'strategicKeyVault${{ parameters.environmentName }}' `
                   --template-file bicep/platformKeyVault.bicep `
                   --location 'uksouth' `
                   --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
@@ -67,6 +70,7 @@ jobs:
                 
                 if ($skipBicepValidate -ne $true) { 
                   az deployment sub what-if `
+                    --name 'strategicPlatform${{ parameters.environmentName }}' `
                     --template-file bicep/platform.bicep `
                     --location 'uksouth' `
                     --parameters @params/platform.${{ parameters.environmentTag }}.json `

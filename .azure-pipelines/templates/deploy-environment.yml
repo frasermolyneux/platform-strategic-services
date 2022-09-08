@@ -36,6 +36,7 @@ stages:
                   if ($null -eq (az keyvault show --name 'kv-mx-nuget-${{ parameters.environmentTag }}-uksouth')) { $nugetKeyVaultCreateMode = 'default' } else { $nugetKeyVaultCreateMode = 'recover' }
 
                   az deployment sub create `
+                    --name 'strategicKeyVault${{ parameters.environmentName }}' `
                     --template-file bicep/platformKeyVault.bicep `
                     --location 'uksouth' `
                     --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
@@ -94,6 +95,7 @@ stages:
                   $sqlAdminOid = (az ad group show --group "sg-sql-platform-${{ parameters.environmentTag }}-admins" --query 'id')  | ConvertFrom-Json
 
                   az deployment sub create `
+                    --name 'strategicPlatform${{ parameters.environmentName }}' `
                     --template-file bicep/platform.bicep `
                     --location 'uksouth' `
                     --parameters @params/platform.${{ parameters.environmentTag }}.json `
