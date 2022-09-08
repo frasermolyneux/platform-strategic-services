@@ -9,13 +9,13 @@
             "value": "prd"
         },
         "parAppServicePlanSkuName": {
-            "value": "P1v3"
+            "value": "P1v2"
         },
         "parAppServicePlanSkuTier": {
             "value": "Premium"
         },
         "parAppServicePlanSkuSize": {
-            "value": "P1"
+            "value": "P2"
         },
         "parAppServicePlanSkuFamily": {
             "value": "P"
