@@ -9,13 +9,13 @@
             "value": "dev"
         },
         "parAppServicePlanSkuName": {
-            "value": "B3"
+            "value": "B2"
         },
         "parAppServicePlanSkuTier": {
             "value": "Basic"
         },
         "parAppServicePlanSkuSize": {
-            "value": "B3"
+            "value": "B2"
         },
         "parAppServicePlanSkuFamily": {
             "value": "B"
