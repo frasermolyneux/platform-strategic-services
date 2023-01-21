@@ -19,14 +19,14 @@ param parTags object
 
 // Variables
 var varDeploymentPrefix = 'strategicPlatform' //Prevent deployment naming conflicts
-var varAppSvcPlanResourceGroupName = 'rg-platform-webapps-${parEnvironment}-${parLocation}'
-var varApimResourceGroupName = 'rg-platform-apim-${parEnvironment}-${parLocation}'
-var varSqlResourceGroupName = 'rg-platform-sql-${parEnvironment}-${parLocation}'
-var varAcrResourceGroupName = 'rg-platform-acr-${parEnvironment}-${parLocation}'
+var varAppSvcPlanResourceGroupName = 'rg-platform-webapps-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
+var varApimResourceGroupName = 'rg-platform-apim-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
+var varSqlResourceGroupName = 'rg-platform-sql-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
+var varAcrResourceGroupName = 'rg-platform-acr-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
 
-var varApimName = 'apim-mx-platform-${parEnvironment}-${parLocation}'
-var varAppServicePlanName = 'plan-platform-${parEnvironment}-${parLocation}'
-var varAcrName = 'acrmxplatform${parEnvironment}${parLocation}'
+var varApimName = 'apim-mx-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
+var varAppServicePlanName = 'plan-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}-01'
+var varAcrName = 'acr-${uniqueString(subscription().id)}${parEnvironment}${parLocation}'
 
 // Platform
 resource appSvcPlanResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {

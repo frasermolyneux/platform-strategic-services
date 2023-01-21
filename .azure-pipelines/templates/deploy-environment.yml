@@ -32,16 +32,21 @@ stages:
                 scriptType: 'pscore'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
-                  if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environmentTag }}-uksouth')) { $platformKeyVaultCreateMode = 'default' } else { $platformKeyVaultCreateMode = 'recover' }
-                  if ($null -eq (az keyvault show --name 'kv-mx-nuget-${{ parameters.environmentTag }}-uksouth')) { $nugetKeyVaultCreateMode = 'default' } else { $nugetKeyVaultCreateMode = 'recover' }
+                  $deletedKeyVaults = az keyvault list-deleted --query '[].properties.vaultId' | ConvertFrom-Json
+                  $isDeleted = $deletedKeyVaults | where {$_ -match 'rg-platform-keyvault-*.*-${{ parameters.environmentTag }}-uksouth'}
 
+                  $keyVaultCreateMode = "default"
+                  if ($isDeleted -ne $null) {
+                    # To allow the environments to be torn-down and re-created, the Key Vault Create Mode must be set to 'recover'.
+                    $keyVaultCreateMode = "recover"
+                  }
+                  
                   az deployment sub create `
                     --name 'strategicKeyVault${{ parameters.environmentName }}' `
                     --template-file bicep/platformKeyVault.bicep `
                     --location 'uksouth' `
                     --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
-                      parPlatformKeyVaultCreateMode=$platformKeyVaultCreateMode `
-                      parNugetKeyVaultCreateMode=$nugetKeyVaultCreateMode
+                      parPlatformKeyVaultCreateMode=$keyVaultCreateMode
 
   - job: Execute${{ parameters.environmentName }}PlatformKeyVaultScripts
     dependsOn: ['Deploy${{ parameters.environmentName }}PlatformKeyVaultBicep']
@@ -58,9 +63,16 @@ stages:
           azureSubscription: ${{ parameters.azureSubscription }}
           scriptType: 'pscore'
           scriptLocation: 'scriptPath'
-          arguments: '"${{ parameters.environmentTag }}" "uksouth"'
           addSpnToEnvironment: true
-          scriptPath: '$(Build.sourcesDirectory)/.azure-pipelines/scripts/SetSqlServerAdminCredentials.ps1'
+          inlineScript: |
+            $keyVaultName = az deployment sub show --name strategicKeyVault${{ parameters.environmentName }} --query properties.outputs.keyVaultName.value
+
+            $secretName = "sql-platform-${{ parameters.environmentTag }}-uksouth-admin-password"
+            if ($null -eq (az keyvault secret show --vault-name $keyVaultName --name $secretName)) {
+                $password = ("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789!£$%^&*()".tochararray() | Sort-Object { Get-Random })[0..18] -join ''
+                az keyvault secret set --name "$secretName" --vault-name $keyVaultName --value "$password" --description 'text/plain' | Out-Null
+                az keyvault secret set --name "sql-platform-${{ parameters.environmentTag }}-uksouth-admin-username" --vault-name $keyVaultName --value "sql-platform-${{ parameters.environmentTag }}-uksouth-addy" --description 'text/plain' | Out-Null
+            }
 
       - task: AzureCLI@2
         displayName: CreateDatabaseAADGroups

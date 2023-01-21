@@ -6,15 +6,13 @@ param parEnvironment string
 param parDeployPrincipalId string
 
 param parPlatformKeyVaultCreateMode string = 'recover'
-param parNugetKeyVaultCreateMode string = 'recover'
 
 param parTags object
 
 // Variables
 var varDeploymentPrefix = 'strategicKeyVault' //Prevent deployment naming conflicts
-var varKeyVaultName = 'kv-mx-pltfrm-${parEnvironment}-${parLocation}'
-var varNugetKeyVaultName = 'kv-mx-nuget-${parEnvironment}-${parLocation}'
-var varKeyVaultResourceGroupName = 'rg-platform-keyvault-${parEnvironment}-${parLocation}'
+var varKeyVaultName = 'kv-${uniqueString(subscription().id)}-${parLocation}'
+var varKeyVaultResourceGroupName = 'rg-platform-keyvault-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
 
 // Module Resources
 resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -43,20 +41,6 @@ module keyVault 'modules/keyVault.bicep' = {
   }
 }
 
-module nugetKeyVault 'modules/keyVault.bicep' = if (parEnvironment == 'prd') {
-  name: '${varDeploymentPrefix}-nugetKeyVault'
-  scope: resourceGroup(keyVaultResourceGroup.name)
-
-  params: {
-    parKeyVaultName: varNugetKeyVaultName
-    parLocation: parLocation
-
-    parKeyVaultCreateMode: parNugetKeyVaultCreateMode
-
-    parTags: parTags
-  }
-}
-
 module keyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
   name: '${varDeploymentPrefix}-keyVaultAccessPolicy'
   scope: resourceGroup(keyVaultResourceGroup.name)
@@ -68,13 +52,5 @@ module keyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
   }
 }
 
-module nugetKeyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = if (parEnvironment == 'prd') {
-  name: '${varDeploymentPrefix}-nugetKeyVaultAccessPolicy'
-  scope: resourceGroup(keyVaultResourceGroup.name)
-
-  params: {
-    parKeyVaultName: (parEnvironment == 'prd') ? nugetKeyVault.outputs.outKeyVaultName : ''
-    parPrincipalId: parDeployPrincipalId
-    parSecretsPermissions: [ 'get', 'list' ]
-  }
-}
+// Outputs
+output keyVaultName string = keyVault.outputs.outKeyVaultName
