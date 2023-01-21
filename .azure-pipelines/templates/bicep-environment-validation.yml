@@ -39,9 +39,10 @@ jobs:
                   --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
                       parPlatformKeyVaultCreateMode='recover'
 
-                if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environmentTag }}-uksouth')) { $skipBicepValidate = $true }
+                $keyVaults = az keyvault list --query '[].id' | ConvertFrom-Json
+                $existing = $keyVaults | where {$_ -match 'rg-platform-vault-*.*-${{ parameters.environmentTag }}-uksouth'}
 
-                if ($skipBicepValidate -ne $true) { 
+                if ($null -ne $existing) { 
                   az deployment sub validate `
                     --name 'strategicPlatform${{ parameters.environmentName }}' `
                     --template-file bicep/platform.bicep `
@@ -64,9 +65,10 @@ jobs:
                   --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
                       parPlatformKeyVaultCreateMode='recover'
 
-                if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environmentTag }}-uksouth')) { $skipBicepValidate = $true }
-                
-                if ($skipBicepValidate -ne $true) { 
+                $keyVaults = az keyvault list --query '[].id' | ConvertFrom-Json
+                $existing = $keyVaults | where {$_ -match 'rg-platform-vault-*.*-${{ parameters.environmentTag }}-uksouth'}
+
+                if ($null -ne $existing) { 
                   az deployment sub what-if `
                     --name 'strategicPlatform${{ parameters.environmentName }}' `
                     --template-file bicep/platform.bicep `

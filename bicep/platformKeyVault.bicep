@@ -12,7 +12,7 @@ param parTags object
 // Variables
 var varDeploymentPrefix = 'strategicKeyVault' //Prevent deployment naming conflicts
 var varKeyVaultName = 'kv-${uniqueString(subscription().id)}-${parLocation}'
-var varKeyVaultResourceGroupName = 'rg-platform-keyvault-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
+var varKeyVaultResourceGroupName = 'rg-platform-vault-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
 
 // Module Resources
 resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
