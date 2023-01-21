@@ -37,8 +37,7 @@ jobs:
                   --template-file bicep/platformKeyVault.bicep `
                   --location 'uksouth' `
                   --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
-                      parPlatformKeyVaultCreateMode='recover' `
-                      parNugetKeyVaultCreateMode='recover'
+                      parPlatformKeyVaultCreateMode='recover'
 
                 if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environmentTag }}-uksouth')) { $skipBicepValidate = $true }
 
@@ -63,8 +62,7 @@ jobs:
                   --template-file bicep/platformKeyVault.bicep `
                   --location 'uksouth' `
                   --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
-                      parPlatformKeyVaultCreateMode='recover' `
-                      parNugetKeyVaultCreateMode='recover'
+                      parPlatformKeyVaultCreateMode='recover'
 
                 if ($null -eq (az keyvault show --name 'kv-mx-pltfrm-${{ parameters.environmentTag }}-uksouth')) { $skipBicepValidate = $true }
                 
