@@ -62,7 +62,6 @@ stages:
         inputs:
           azureSubscription: ${{ parameters.azureSubscription }}
           scriptType: 'pscore'
-          scriptLocation: 'scriptPath'
           addSpnToEnvironment: true
           inlineScript: |
             $keyVaultName = az deployment sub show --name strategicKeyVault${{ parameters.environmentName }} --query properties.outputs.keyVaultName.value
