@@ -36,7 +36,7 @@ module keyVault 'modules/keyVault.bicep' = {
     parEnabledForTemplateDeployment: true
     parEnabledForRbacAuthorization: true
 
-    parSoftDeleteRetentionInDays: 90
+    parSoftDeleteRetentionInDays: 30
 
     parTags: parTags
   }
