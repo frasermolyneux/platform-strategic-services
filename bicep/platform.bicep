@@ -27,7 +27,7 @@ var varAcrResourceGroupName = 'rg-platform-acr-${uniqueString(subscription().id)
 
 var varApimName = 'apim-mx-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
 var varAppServicePlanName = 'plan-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}-01'
-var varAcrName = 'acr-${uniqueString(subscription().id)}${parEnvironment}${parLocation}'
+var varAcrName = 'acr${uniqueString(subscription().id)}'
 
 // Platform
 resource appSvcPlanResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
