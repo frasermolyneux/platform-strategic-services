@@ -1,6 +1,7 @@
 targetScope = 'resourceGroup'
 
 // Parameters
+param parSqlServerName string
 param parLocation string
 param parEnvironment string
 @secure()
@@ -10,12 +11,11 @@ param parSqlAdminPassword string
 param parAdminGroupOid string
 
 // Variables
-var varSqlServerName = 'sql-platform-${parEnvironment}-${parLocation}'
 var varSqlAdminGroupName = 'sg-sql-platform-${parEnvironment}-admins'
 
 // Module Resources
 resource sqlServer 'Microsoft.Sql/servers@2021-11-01-preview' = {
-  name: varSqlServerName
+  name: parSqlServerName
   location: parLocation
 
   identity: {

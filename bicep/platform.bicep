@@ -22,6 +22,7 @@ var varDeploymentPrefix = 'strategicPlatform' //Prevent deployment naming confli
 var varAppSvcPlanResourceGroupName = 'rg-platform-webapps-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
 var varApimResourceGroupName = 'rg-platform-apim-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
 var varSqlResourceGroupName = 'rg-platform-sql-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
+var varSqlServerName = 'sql-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
 var varAcrResourceGroupName = 'rg-platform-acr-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
 
 var varApimName = 'apim-mx-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
@@ -90,6 +91,7 @@ module sqlServer 'platform/sqlServer.bicep' = {
   scope: resourceGroup(sqlResourceGroup.name)
 
   params: {
+    parSqlServerName: varSqlServerName
     parLocation: parLocation
     parEnvironment: parEnvironment
     parSqlAdminUsername: parSqlAdminUsername
