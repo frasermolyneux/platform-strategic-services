@@ -34,21 +34,28 @@ module keyVault 'modules/keyVault.bicep' = {
     parKeyVaultCreateMode: parPlatformKeyVaultCreateMode
     parEnabledForDeployment: true
     parEnabledForTemplateDeployment: true
+    parEnabledForRbacAuthorization: true
 
-    parSoftDeleteRetentionInDays: 30
+    parSoftDeleteRetentionInDays: 90
 
     parTags: parTags
   }
 }
 
-module keyVaultAccessPolicy 'modules/keyVaultAccessPolicy.bicep' = {
-  name: '${varDeploymentPrefix}-keyVaultAccessPolicy'
+@description('https://learn.microsoft.com/en-gb/azure/role-based-access-control/built-in-roles#key-vault-secrets-officer')
+resource keyVaultSecretsOfficerRoleDefinition 'Microsoft.Authorization/roleDefinitions@2022-04-01' existing = {
+  scope: subscription()
+  name: 'b86a8fe4-44ce-4948-aee5-eccb2c155cd7'
+}
+
+module keyVaultSecretUserRoleAssignment 'modules/keyVaultRoleAssignment.bicep' = {
+  name: '${varDeploymentPrefix}-keyVaultSecretUserRoleAssignment'
   scope: resourceGroup(keyVaultResourceGroup.name)
 
   params: {
     parKeyVaultName: keyVault.outputs.outKeyVaultName
+    parRoleDefinitionId: keyVaultSecretsOfficerRoleDefinition.id
     parPrincipalId: parDeployPrincipalId
-    parSecretsPermissions: [ 'get', 'set', 'list' ]
   }
 }
 
