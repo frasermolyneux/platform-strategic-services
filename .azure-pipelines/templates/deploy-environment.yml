@@ -41,6 +41,8 @@ stages:
                     # To allow the environments to be torn-down and re-created, the Key Vault Create Mode must be set to 'recover'.
                     $keyVaultCreateMode = "recover"
                   }
+
+                  $deployPrincipalId = (az ad sp show --id $env:servicePrincipalId | ConvertFrom-Json).id
                   
                   az deployment sub create `
                     --name 'strategicKeyVault${{ parameters.environmentName }}' `
@@ -48,7 +50,7 @@ stages:
                     --location 'uksouth' `
                     --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
                       parPlatformKeyVaultCreateMode=$keyVaultCreateMode `
-                      parDeployPrincipalId=(az ad sp show --id "$($env:servicePrincipalId)"  | ConvertFrom-Json).id
+                      parDeployPrincipalId=$deployPrincipalId
 
   - job: Execute${{ parameters.environmentName }}PlatformKeyVaultScripts
     dependsOn: ['Deploy${{ parameters.environmentName }}PlatformKeyVaultBicep']
