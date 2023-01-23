@@ -34,7 +34,7 @@ stages:
                 addSpnToEnvironment: true
                 inlineScript: |
                   $deletedKeyVaults = az keyvault list-deleted --query '[].properties.vaultId' | ConvertFrom-Json
-                  $isDeleted = $deletedKeyVaults | where {$_ -match 'rg-platform-keyvault-*.*-${{ parameters.environmentTag }}-uksouth'}
+                  $isDeleted = $deletedKeyVaults | where {$_ -match 'rg-platform-vault-*.*-${{ parameters.environmentTag }}-uksouth'}
 
                   $keyVaultCreateMode = "default"
                   if ($isDeleted -ne $null) {
