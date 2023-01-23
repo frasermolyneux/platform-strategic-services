@@ -8,9 +8,6 @@
         "parEnvironment": {
             "value": "dev"
         },
-        "parDeployPrincipalId": {
-            "value": "e18638bd-1643-4c26-9e55-bab5bccd77e6"
-        },
         "parTags": {
             "value": {
                 "Environment": "dev",

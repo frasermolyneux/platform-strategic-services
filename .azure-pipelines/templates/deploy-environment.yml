@@ -31,6 +31,7 @@ stages:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 scriptType: 'pscore'
                 scriptLocation: 'inlineScript'
+                addSpnToEnvironment: true
                 inlineScript: |
                   $deletedKeyVaults = az keyvault list-deleted --query '[].properties.vaultId' | ConvertFrom-Json
                   $isDeleted = $deletedKeyVaults | where {$_ -match 'rg-platform-keyvault-*.*-${{ parameters.environmentTag }}-uksouth'}
@@ -46,7 +47,8 @@ stages:
                     --template-file bicep/platformKeyVault.bicep `
                     --location 'uksouth' `
                     --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
-                      parPlatformKeyVaultCreateMode=$keyVaultCreateMode
+                      parPlatformKeyVaultCreateMode=$keyVaultCreateMode `
+                      parDeployPrincipalId=$env:servicePrincipalId
 
   - job: Execute${{ parameters.environmentName }}PlatformKeyVaultScripts
     dependsOn: ['Deploy${{ parameters.environmentName }}PlatformKeyVaultBicep']
