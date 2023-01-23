@@ -48,7 +48,7 @@ stages:
                     --location 'uksouth' `
                     --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
                       parPlatformKeyVaultCreateMode=$keyVaultCreateMode `
-                      parDeployPrincipalId=(az ad sp show --id $env:servicePrincipalId  | ConvertFrom-Json).id
+                      parDeployPrincipalId=(az ad sp show --id "$($env:servicePrincipalId)"  | ConvertFrom-Json).id
 
   - job: Execute${{ parameters.environmentName }}PlatformKeyVaultScripts
     dependsOn: ['Deploy${{ parameters.environmentName }}PlatformKeyVaultBicep']
