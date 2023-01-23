@@ -4,10 +4,6 @@ targetScope = 'subscription'
 param parLocation string
 param parEnvironment string
 
-@secure()
-param parSqlAdminUsername string
-@secure()
-param parSqlAdminPassword string
 param parSqlAdminOid string
 
 param parAppServicePlanSkuName string
@@ -28,6 +24,12 @@ var varAcrResourceGroupName = 'rg-platform-acr-${uniqueString(subscription().id)
 var varApimName = 'apim-mx-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
 var varAppServicePlanName = 'plan-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}-01'
 var varAcrName = 'acr${uniqueString(subscription().id)}'
+
+// Existing Resources
+resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
+  name: 'kv-${uniqueString(subscription().id)}-${parLocation}'
+  scope: resourceGroup('rg-platform-vault-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}')
+}
 
 // Platform
 resource appSvcPlanResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
@@ -94,8 +96,8 @@ module sqlServer 'platform/sqlServer.bicep' = {
     parSqlServerName: varSqlServerName
     parLocation: parLocation
     parEnvironment: parEnvironment
-    parSqlAdminUsername: parSqlAdminUsername
-    parSqlAdminPassword: parSqlAdminPassword
+    parSqlAdminUsername: keyVault.getSecret('sql-platform-${parEnvironment}-uksouth-admin-username')
+    parSqlAdminPassword: keyVault.getSecret('sql-platform-${parEnvironment}-uksouth-admin-password')
     parAdminGroupOid: parSqlAdminOid
   }
 }
