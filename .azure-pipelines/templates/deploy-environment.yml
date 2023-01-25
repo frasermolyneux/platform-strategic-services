@@ -36,7 +36,7 @@ stages:
                   $config = (Get-Content $(Build.sourcesDirectory)/params/platformKeyVault.${{ parameters.environmentTag }}.json | ConvertFrom-Json)
 
                   $deletedKeyVaults = az keyvault list-deleted --query '[].properties.vaultId' | ConvertFrom-Json
-                  $isDeleted = $deletedKeyVaults | where {$_ -match 'rg-platform-vault-${{ parameters.environmentTag }}-$config.parameters.parLocation.value-$($config.parameters.parInstance.value)'}
+                  $isDeleted = $deletedKeyVaults | where {$_ -match 'rg-platform-vault-${{ parameters.environmentTag }}-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)'}
 
                   $keyVaultCreateMode = "default"
                   if ($isDeleted -ne $null) {
@@ -93,7 +93,7 @@ stages:
                 scriptType: 'pscore'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
-                  $config = (Get-Content $(Build.sourcesDirectory)/params/platformKeyVault.${{ parameters.environmentTag }}.json | ConvertFrom-Json)
+                  $config = (Get-Content $(Build.sourcesDirectory)/params/platform.${{ parameters.environmentTag }}.json | ConvertFrom-Json)
 
                   $sqlAdminOid = (az ad group show --group "sg-sql-platform-${{ parameters.environmentTag }}-admins" --query 'id')  | ConvertFrom-Json
 
