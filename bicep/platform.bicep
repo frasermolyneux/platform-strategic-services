@@ -1,8 +1,9 @@
 targetScope = 'subscription'
 
 // Parameters
-param parLocation string
 param parEnvironment string
+param parLocation string
+param parInstance string
 
 param parSqlAdminOid string
 
@@ -14,21 +15,23 @@ param parAppServicePlanSkuFamily string
 param parTags object
 
 // Variables
-var varDeploymentPrefix = 'strategicPlatform' //Prevent deployment naming conflicts
-var varAppSvcPlanResourceGroupName = 'rg-platform-webapps-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
-var varApimResourceGroupName = 'rg-platform-apim-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
-var varSqlResourceGroupName = 'rg-platform-sql-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
-var varSqlServerName = 'sql-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
-var varAcrResourceGroupName = 'rg-platform-acr-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
+var environmentUniqueId = uniqueString('strategic', parEnvironment, parInstance)
+var varDeploymentPrefix = 'services-${environmentUniqueId}' //Prevent deployment naming conflicts
 
-var varApimName = 'apim-mx-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
-var varAppServicePlanName = 'plan-platform-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}-01'
-var varAcrName = 'acr${uniqueString(subscription().id)}'
+var varAppSvcPlanResourceGroupName = 'rg-platform-plans-${parEnvironment}-${parLocation}-${parInstance}'
+var varApimResourceGroupName = 'rg-platform-apim-${parEnvironment}-${parLocation}-${parInstance}'
+var varSqlResourceGroupName = 'rg-platform-sql-${parEnvironment}-${parLocation}-${parInstance}'
+var varAcrResourceGroupName = 'rg-platform-acr-${parEnvironment}-${parLocation}-${parInstance}'
+
+var varAppServicePlanName = 'plan-platform-${parEnvironment}-${parLocation}-01' //TODO: Array of plans will be added later; hence the hardcoded 01
+var varApimName = 'apim-platform-${parEnvironment}-${parLocation}-${environmentUniqueId}'
+var varSqlServerName = 'sql-platform-${parEnvironment}-${parLocation}-${parInstance}-${environmentUniqueId}'
+var varAcrName = 'acr${environmentUniqueId}'
 
 // Existing Resources
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
-  name: 'kv-${uniqueString(subscription().id)}-${parLocation}'
-  scope: resourceGroup('rg-platform-vault-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}')
+  name: 'kv-${environmentUniqueId}-${parLocation}'
+  scope: resourceGroup('rg-platform-vault-${parEnvironment}-${parLocation}-${parInstance}')
 }
 
 // Platform
@@ -96,8 +99,8 @@ module sqlServer 'platform/sqlServer.bicep' = {
     parSqlServerName: varSqlServerName
     parLocation: parLocation
     parEnvironment: parEnvironment
-    parSqlAdminUsername: keyVault.getSecret('sql-platform-${parEnvironment}-uksouth-admin-username')
-    parSqlAdminPassword: keyVault.getSecret('sql-platform-${parEnvironment}-uksouth-admin-password')
+    parSqlAdminUsername: keyVault.getSecret('sql-platform-${parEnvironment}-admin-username')
+    parSqlAdminPassword: keyVault.getSecret('sql-platform-${parEnvironment}-admin-password')
     parAdminGroupOid: parSqlAdminOid
   }
 }

@@ -1,8 +1,10 @@
 targetScope = 'subscription'
 
 // Parameters
-param parLocation string
 param parEnvironment string
+param parLocation string
+param parInstance string
+
 param parDeployPrincipalId string
 
 param parPlatformKeyVaultCreateMode string = 'recover'
@@ -10,9 +12,11 @@ param parPlatformKeyVaultCreateMode string = 'recover'
 param parTags object
 
 // Variables
-var varDeploymentPrefix = 'strategicKeyVault' //Prevent deployment naming conflicts
-var varKeyVaultName = 'kv-${uniqueString(subscription().id)}-${parLocation}'
-var varKeyVaultResourceGroupName = 'rg-platform-vault-${uniqueString(subscription().id)}-${parEnvironment}-${parLocation}'
+var environmentUniqueId = uniqueString('strategic', parEnvironment, parInstance)
+var varDeploymentPrefix = 'keyvault-${environmentUniqueId}' //Prevent deployment naming conflicts
+
+var varKeyVaultName = 'kv-${environmentUniqueId}-${parLocation}'
+var varKeyVaultResourceGroupName = 'rg-platform-vault-${parEnvironment}-${parLocation}-${parInstance}'
 
 // Module Resources
 resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
