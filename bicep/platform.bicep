@@ -15,8 +15,8 @@ param parAppServicePlanSkuFamily string
 param parTags object
 
 // Variables
-var environmentUniqueId = uniqueString('strategic', parEnvironment, parInstance)
-var varDeploymentPrefix = 'services-${environmentUniqueId}' //Prevent deployment naming conflicts
+var varEnvironmentUniqueId = uniqueString('strategic', parEnvironment, parInstance)
+var varDeploymentPrefix = 'services-${varEnvironmentUniqueId}' //Prevent deployment naming conflicts
 
 var varAppSvcPlanResourceGroupName = 'rg-platform-plans-${parEnvironment}-${parLocation}-${parInstance}'
 var varApimResourceGroupName = 'rg-platform-apim-${parEnvironment}-${parLocation}-${parInstance}'
@@ -24,13 +24,13 @@ var varSqlResourceGroupName = 'rg-platform-sql-${parEnvironment}-${parLocation}-
 var varAcrResourceGroupName = 'rg-platform-acr-${parEnvironment}-${parLocation}-${parInstance}'
 
 var varAppServicePlanName = 'plan-platform-${parEnvironment}-${parLocation}-01' //TODO: Array of plans will be added later; hence the hardcoded 01
-var varApimName = 'apim-platform-${parEnvironment}-${parLocation}-${environmentUniqueId}'
-var varSqlServerName = 'sql-platform-${parEnvironment}-${parLocation}-${parInstance}-${environmentUniqueId}'
-var varAcrName = 'acr${environmentUniqueId}'
+var varApimName = 'apim-platform-${parEnvironment}-${parLocation}-${varEnvironmentUniqueId}'
+var varSqlServerName = 'sql-platform-${parEnvironment}-${parLocation}-${parInstance}-${varEnvironmentUniqueId}'
+var varAcrName = 'acr${varEnvironmentUniqueId}'
 
 // Existing Resources
 resource keyVault 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
-  name: 'kv-${environmentUniqueId}-${parLocation}'
+  name: 'kv-${varEnvironmentUniqueId}-${parLocation}'
   scope: resourceGroup('rg-platform-vault-${parEnvironment}-${parLocation}-${parInstance}')
 }
 

@@ -12,10 +12,10 @@ param parPlatformKeyVaultCreateMode string = 'recover'
 param parTags object
 
 // Variables
-var environmentUniqueId = uniqueString('strategic', parEnvironment, parInstance)
-var varDeploymentPrefix = 'keyvault-${environmentUniqueId}' //Prevent deployment naming conflicts
+var varEnvironmentUniqueId = uniqueString('strategic', parEnvironment, parInstance)
+var varDeploymentPrefix = 'keyvault-${varEnvironmentUniqueId}' //Prevent deployment naming conflicts
 
-var varKeyVaultName = 'kv-${environmentUniqueId}-${parLocation}'
+var varKeyVaultName = 'kv-${varEnvironmentUniqueId}-${parLocation}'
 var varKeyVaultResourceGroupName = 'rg-platform-vault-${parEnvironment}-${parLocation}-${parInstance}'
 
 // Module Resources
