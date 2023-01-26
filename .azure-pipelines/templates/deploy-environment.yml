@@ -51,7 +51,7 @@ stages:
                     --template-file bicep/platformKeyVault.bicep `
                     --location $config.parameters.parLocation.value `
                     --parameters @params/platformKeyVault.${{ parameters.environmentTag }}.json `
-                      parPlatformKeyVaultCreateMode=$keyVaultCreateMode `
+                      parKeyVaultCreateMode=$keyVaultCreateMode `
                       parDeployPrincipalId=$deployPrincipalId
 
   - job: Execute${{ parameters.environmentName }}PlatformKeyVaultScripts

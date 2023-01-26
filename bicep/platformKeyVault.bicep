@@ -7,7 +7,7 @@ param parInstance string
 
 param parDeployPrincipalId string
 
-param parPlatformKeyVaultCreateMode string = 'recover'
+param parKeyVaultCreateMode string = 'recover'
 
 param parTags object
 
@@ -35,7 +35,7 @@ module keyVault 'modules/keyVault.bicep' = {
     parKeyVaultName: varKeyVaultName
     parLocation: parLocation
 
-    parKeyVaultCreateMode: parPlatformKeyVaultCreateMode
+    parKeyVaultCreateMode: parKeyVaultCreateMode
     parEnabledForDeployment: true
     parEnabledForTemplateDeployment: true
     parEnabledForRbacAuthorization: true
