@@ -96,9 +96,12 @@ module sqlServer 'platform/sqlServer.bicep' = {
   scope: resourceGroup(sqlResourceGroup.name)
 
   params: {
-    parSqlServerName: varSqlServerName
-    parLocation: parLocation
     parEnvironment: parEnvironment
+    parLocation: parLocation
+    parInstance: parInstance
+
+    parSqlServerName: varSqlServerName
+
     parSqlAdminUsername: keyVault.getSecret('sql-platform-${parEnvironment}-admin-username')
     parSqlAdminPassword: keyVault.getSecret('sql-platform-${parEnvironment}-admin-password')
     parAdminGroupOid: parSqlAdminOid

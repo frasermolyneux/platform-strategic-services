@@ -95,7 +95,7 @@ stages:
                 inlineScript: |
                   $config = (Get-Content $(Build.sourcesDirectory)/params/platform.${{ parameters.environmentTag }}.json | ConvertFrom-Json)
 
-                  $sqlAdminOid = (az ad group show --group "sg-sql-platform-${{ parameters.environmentTag }}-admins" --query 'id')  | ConvertFrom-Json
+                  $sqlAdminOid = (az ad group show --group "sg-sql-platform-admins-${{ parameters.environmentTag }}-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)" --query 'id')  | ConvertFrom-Json
 
                   az deployment sub create `
                     --name 'strategicPlatform${{ parameters.environmentName }}' `

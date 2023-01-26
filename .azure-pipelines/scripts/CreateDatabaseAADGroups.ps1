@@ -3,4 +3,6 @@ param (
 )
 
 # Server Admin Group
-. "./.azure-pipelines/scripts/functions/CreateAADGroup.ps1" -groupName "sg-sql-platform-$environment-admins"
+$config = (Get-Content $(Build.sourcesDirectory)/params/platformKeyVault.$environment.json | ConvertFrom-Json)
+
+. "./.azure-pipelines/scripts/functions/CreateAADGroup.ps1" -groupName "sg-sql-platform-admins-$environment-$($config.parameters.parInstance.value)"
