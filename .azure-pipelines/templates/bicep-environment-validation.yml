@@ -30,7 +30,7 @@ jobs:
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                $config = (Get-Content ./params/platformKeyVault.${{ parameters.environmentName }}.json | ConvertFrom-Json)
+                $config = (Get-Content ./params/platform.${{ parameters.environmentName }}.json | ConvertFrom-Json)
 
                 $keyVaults = az keyvault list --query '[].id' | ConvertFrom-Json
                 $existing = $keyVaults | where {$_ -match "rg-platform-vault-${{ parameters.environmentName }}-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)"}
@@ -52,7 +52,7 @@ jobs:
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                $config = (Get-Content ./params/platformKeyVault.${{ parameters.environmentName }}.json | ConvertFrom-Json)
+                $config = (Get-Content ./params/platform.${{ parameters.environmentName }}.json | ConvertFrom-Json)
 
                 $keyVaults = az keyvault list --query '[].id' | ConvertFrom-Json
                 $existing = $keyVaults | where {$_ -match "rg-platform-vault-${{ parameters.environmentName }}-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)"}
