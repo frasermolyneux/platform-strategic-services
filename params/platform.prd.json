@@ -12,16 +12,16 @@
             "value": "01"
         },
         "parAppServicePlanSkuName": {
-            "value": "P1v2"
+            "value": "B3"
         },
         "parAppServicePlanSkuTier": {
-            "value": "Premium"
+            "value": "Basic"
         },
         "parAppServicePlanSkuSize": {
-            "value": "P2"
+            "value": "B3"
         },
         "parAppServicePlanSkuFamily": {
-            "value": "P"
+            "value": "B"
         },
         "parTags": {
             "value": {
