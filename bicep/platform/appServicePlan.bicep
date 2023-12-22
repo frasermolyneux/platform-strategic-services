@@ -4,9 +4,9 @@ targetScope = 'resourceGroup'
 param parAppServicePlanName string
 param parLocation string
 
-param parSkuName string = 'P1v3'
+param parSkuName string = 'P0v3'
 param parSkuTier string = 'Premium'
-param parSkuSize string = 'P1'
+param parSkuSize string = 'P0'
 param parSkuFamily string = 'P'
 param parSkuCapacity int = 1
 
