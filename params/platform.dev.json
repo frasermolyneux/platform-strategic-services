@@ -11,18 +11,6 @@
         "parInstance": {
             "value": "01"
         },
-        "parAppServicePlanSkuName": {
-            "value": "B2"
-        },
-        "parAppServicePlanSkuTier": {
-            "value": "Basic"
-        },
-        "parAppServicePlanSkuSize": {
-            "value": "B2"
-        },
-        "parAppServicePlanSkuFamily": {
-            "value": "B"
-        },
         "parTags": {
             "value": {
                 "Environment": "dev",

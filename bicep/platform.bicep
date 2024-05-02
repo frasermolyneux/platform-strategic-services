@@ -5,11 +5,6 @@ param parEnvironment string
 param parLocation string
 param parInstance string
 
-param parAppServicePlanSkuName string
-param parAppServicePlanSkuTier string
-param parAppServicePlanSkuSize string
-param parAppServicePlanSkuFamily string
-
 param parTags object
 
 param parSqlAdminOid string
@@ -20,13 +15,11 @@ var varEnvironmentUniqueId = uniqueString('strategic', parEnvironment, parInstan
 var varDeploymentPrefix = 'services-${varEnvironmentUniqueId}' //Prevent deployment naming conflicts
 
 var varKeyVaultResourceGroupName = 'rg-platform-vault-${parEnvironment}-${parLocation}-${parInstance}'
-var varAppSvcPlanResourceGroupName = 'rg-platform-plans-${parEnvironment}-${parLocation}-${parInstance}'
 var varApimResourceGroupName = 'rg-platform-apim-${parEnvironment}-${parLocation}-${parInstance}'
 var varSqlResourceGroupName = 'rg-platform-sql-${parEnvironment}-${parLocation}-${parInstance}'
 var varAcrResourceGroupName = 'rg-platform-acr-${parEnvironment}-${parLocation}-${parInstance}'
 
 var varKeyVaultName = 'kv-${varEnvironmentUniqueId}-${parLocation}'
-var varAppServicePlanName = 'plan-platform-${parEnvironment}-${parLocation}-01' //TODO: Array of plans will be added later; hence the hardcoded 01
 var varApimName = 'apim-platform-${parEnvironment}-${parLocation}-${varEnvironmentUniqueId}'
 var varSqlServerName = 'sql-platform-${parEnvironment}-${parLocation}-${parInstance}-${varEnvironmentUniqueId}'
 var varAcrName = 'acr${varEnvironmentUniqueId}'
@@ -82,28 +75,6 @@ module apiManagment 'platform/apiManagement.bicep' = {
   }
 }
 
-resource appSvcPlanResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: varAppSvcPlanResourceGroupName
-  location: parLocation
-  tags: parTags
-
-  properties: {}
-}
-
-module appServicePlan 'platform/appServicePlan.bicep' = {
-  name: '${varDeploymentPrefix}-appServicePlan'
-  scope: resourceGroup(appSvcPlanResourceGroup.name)
-
-  params: {
-    parAppServicePlanName: varAppServicePlanName
-    parLocation: parLocation
-    parSkuName: parAppServicePlanSkuName
-    parSkuTier: parAppServicePlanSkuTier
-    parSkuSize: parAppServicePlanSkuSize
-    parSkuFamily: parAppServicePlanSkuFamily
-  }
-}
-
 resource sqlResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: varSqlResourceGroupName
   location: parLocation
@@ -129,22 +100,24 @@ module sqlServer 'platform/sqlServer.bicep' = {
   }
 }
 
-resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = if (parEnvironment == 'prd') {
-  name: varAcrResourceGroupName
-  location: parLocation
-  tags: parTags
+resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' =
+  if (parEnvironment == 'prd') {
+    name: varAcrResourceGroupName
+    location: parLocation
+    tags: parTags
 
-  properties: {}
-}
-
-module containerRegistry 'modules/containerRegistry.bicep' = if (parEnvironment == 'prd') {
-  name: '${varDeploymentPrefix}-containerRegistry'
-  scope: resourceGroup(acrResourceGroup.name)
-
-  params: {
-    parAcrName: varAcrName
-    parLocation: parLocation
-    parAcrSku: 'Basic'
-    parTags: parTags
+    properties: {}
   }
-}
+
+module containerRegistry 'modules/containerRegistry.bicep' =
+  if (parEnvironment == 'prd') {
+    name: '${varDeploymentPrefix}-containerRegistry'
+    scope: resourceGroup(acrResourceGroup.name)
+
+    params: {
+      parAcrName: varAcrName
+      parLocation: parLocation
+      parAcrSku: 'Basic'
+      parTags: parTags
+    }
+  }
