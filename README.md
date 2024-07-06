@@ -9,12 +9,6 @@
 
 ---
 
-## Documentation
-
-* [manual-steps](/docs/manual-steps.md)
-
----
-
 ## Overview
 
 This repository contains the configuration and associated Azure DevOps pipelines for the MX tenant strategic services. These are services that are considered platform as they are shared by many workloads.
@@ -31,9 +25,7 @@ This repository contains the configuration and associated Azure DevOps pipelines
 
 The solution will deploy the following resources:
 
-* API Management
-* App Service Plans
-* SQL Server
+* Container Registry
 
 ---
 

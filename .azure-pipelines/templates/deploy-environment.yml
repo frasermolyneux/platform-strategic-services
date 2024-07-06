@@ -23,24 +23,12 @@ stages:
             - checkout: self
 
             - task: AzureCLI@2
-              displayName: CreateDatabaseAADGroups
-              inputs:
-                azureSubscription: ${{ parameters.azureSubscription }}
-                scriptType: 'pscore'
-                scriptLocation: 'scriptPath'
-                arguments: '"${{ parameters.environmentName }}"'
-                addSpnToEnvironment: true
-                scriptPath: '.azure-pipelines/scripts/CreateDatabaseAADGroups.ps1'
-
-            - task: AzureCLI@2
               inputs:
                 azureSubscription: ${{ parameters.azureSubscription }}
                 scriptType: 'pscore'
                 scriptLocation: 'inlineScript'
                 inlineScript: |
                   $config = (Get-Content $(Build.sourcesDirectory)/params/platform.${{ parameters.environmentName }}.json | ConvertFrom-Json)
-
-                  $sqlAdminOid = (az ad group show --group "sg-sql-platform-admins-${{ parameters.environmentName }}-$($config.parameters.parInstance.value)" --query 'id')  | ConvertFrom-Json
 
                   $deletedKeyVaults = az keyvault list-deleted --query '[].properties.vaultId' | ConvertFrom-Json
                   $isDeleted = $deletedKeyVaults | where {$_ -match "rg-platform-vault-${{ parameters.environmentName }}-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)"}
@@ -56,5 +44,4 @@ stages:
                     --template-file bicep/platform.bicep `
                     --location $config.parameters.parLocation.value `
                     --parameters @params/platform.${{ parameters.environmentName }}.json `
-                      parSqlAdminOid=$sqlAdminOid `
                       parKeyVaultCreateMode=$keyVaultCreateMode

@@ -7,7 +7,6 @@ param parInstance string
 
 param parTags object
 
-param parSqlAdminOid string
 param parKeyVaultCreateMode string = 'recover'
 
 // Variables
@@ -15,11 +14,9 @@ var varEnvironmentUniqueId = uniqueString('strategic', parEnvironment, parInstan
 var varDeploymentPrefix = 'services-${varEnvironmentUniqueId}' //Prevent deployment naming conflicts
 
 var varKeyVaultResourceGroupName = 'rg-platform-vault-${parEnvironment}-${parLocation}-${parInstance}'
-var varSqlResourceGroupName = 'rg-platform-sql-${parEnvironment}-${parLocation}-${parInstance}'
 var varAcrResourceGroupName = 'rg-platform-acr-${parEnvironment}-${parLocation}-${parInstance}'
 
 var varKeyVaultName = 'kv-${varEnvironmentUniqueId}-${parLocation}'
-var varSqlServerName = 'sql-platform-${parEnvironment}-${parLocation}-${parInstance}-${varEnvironmentUniqueId}'
 var varAcrName = 'acr${varEnvironmentUniqueId}'
 
 // Platform
@@ -47,36 +44,6 @@ module keyVault 'modules/keyVault.bicep' = {
     parSoftDeleteRetentionInDays: 30
 
     parTags: parTags
-  }
-}
-
-resource keyVaultRef 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
-  name: keyVault.outputs.outKeyVaultName
-  scope: resourceGroup(keyVaultResourceGroup.name)
-}
-
-resource sqlResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: varSqlResourceGroupName
-  location: parLocation
-  tags: parTags
-
-  properties: {}
-}
-
-module sqlServer 'platform/sqlServer.bicep' = {
-  name: '${varDeploymentPrefix}-sqlServer'
-  scope: resourceGroup(sqlResourceGroup.name)
-
-  params: {
-    parEnvironment: parEnvironment
-    parLocation: parLocation
-    parInstance: parInstance
-
-    parSqlServerName: varSqlServerName
-
-    parSqlAdminUsername: keyVaultRef.getSecret('sql-platform-${parEnvironment}-admin-username')
-    parSqlAdminPassword: keyVaultRef.getSecret('sql-platform-${parEnvironment}-admin-password')
-    parAdminGroupOid: parSqlAdminOid
   }
 }
 

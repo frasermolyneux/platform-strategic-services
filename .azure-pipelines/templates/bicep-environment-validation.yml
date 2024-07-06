@@ -41,7 +41,6 @@ jobs:
                     --template-file bicep/platform.bicep `
                     --location $config.parameters.parLocation.value `
                     --parameters @params/platform.${{ parameters.environmentName }}.json `
-                      parSqlAdminOid='00000000-0000-0000-0000-000000000000' `
                       parKeyVaultCreateMode='recover'
                 }
 
@@ -63,6 +62,5 @@ jobs:
                     --template-file bicep/platform.bicep `
                     --location $config.parameters.parLocation.value `
                     --parameters @params/platform.${{ parameters.environmentName }}.json `
-                      parSqlAdminOid='00000000-0000-0000-0000-000000000000' `
                       parKeyVaultCreateMode='recover'
                 }
