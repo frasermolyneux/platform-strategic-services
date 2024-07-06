@@ -14,17 +14,17 @@ param keyVaultCreateMode string = 'recover'
 
 // Variables
 var environmentUniqueId = uniqueString('strategic', environment, instance)
-var varDeploymentPrefix = 'services-${environmentUniqueId}' //Prevent deployment naming conflicts
+var deploymentPrefix = 'services-${environmentUniqueId}' //Prevent deployment naming conflicts
 
-var varKeyVaultResourceGroupName = 'rg-platform-vault-${environment}-${location}-${instance}'
-var varAcrResourceGroupName = 'rg-platform-acr-${environment}-${location}-${instance}'
+var keyVaultResourceGroupName = 'rg-platform-vault-${environment}-${location}-${instance}'
+var acrResourceGroupName = 'rg-platform-acr-${environment}-${location}-${instance}'
 
 var keyVaultName = 'kv-${environmentUniqueId}-${location}'
 var varAcrName = 'acr${environmentUniqueId}'
 
 // Platform
 resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: varKeyVaultResourceGroupName
+  name: keyVaultResourceGroupName
   location: location
   tags: tags
 
@@ -32,7 +32,7 @@ resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' =
 }
 
 module keyVault 'modules/keyVault.bicep' = {
-  name: '${varDeploymentPrefix}-keyVault'
+  name: '${deploymentPrefix}-keyVault'
   scope: resourceGroup(keyVaultResourceGroup.name)
 
   params: {
@@ -51,7 +51,7 @@ module keyVault 'modules/keyVault.bicep' = {
 }
 
 resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = if (environment == 'prd') {
-  name: varAcrResourceGroupName
+  name: acrResourceGroupName
   location: location
   tags: tags
 
@@ -59,7 +59,7 @@ resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = if (
 }
 
 module containerRegistry 'modules/containerRegistry.bicep' = if (environment == 'prd') {
-  name: '${varDeploymentPrefix}-containerRegistry'
+  name: '${deploymentPrefix}-containerRegistry'
   scope: resourceGroup(acrResourceGroup.name)
 
   params: {
