@@ -15,12 +15,10 @@ var varEnvironmentUniqueId = uniqueString('strategic', parEnvironment, parInstan
 var varDeploymentPrefix = 'services-${varEnvironmentUniqueId}' //Prevent deployment naming conflicts
 
 var varKeyVaultResourceGroupName = 'rg-platform-vault-${parEnvironment}-${parLocation}-${parInstance}'
-var varApimResourceGroupName = 'rg-platform-apim-${parEnvironment}-${parLocation}-${parInstance}'
 var varSqlResourceGroupName = 'rg-platform-sql-${parEnvironment}-${parLocation}-${parInstance}'
 var varAcrResourceGroupName = 'rg-platform-acr-${parEnvironment}-${parLocation}-${parInstance}'
 
 var varKeyVaultName = 'kv-${varEnvironmentUniqueId}-${parLocation}'
-var varApimName = 'apim-platform-${parEnvironment}-${parLocation}-${varEnvironmentUniqueId}'
 var varSqlServerName = 'sql-platform-${parEnvironment}-${parLocation}-${parInstance}-${varEnvironmentUniqueId}'
 var varAcrName = 'acr${varEnvironmentUniqueId}'
 
@@ -57,24 +55,6 @@ resource keyVaultRef 'Microsoft.KeyVault/vaults@2019-09-01' existing = {
   scope: resourceGroup(keyVaultResourceGroup.name)
 }
 
-resource apimResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
-  name: varApimResourceGroupName
-  location: parLocation
-  tags: parTags
-
-  properties: {}
-}
-
-module apiManagment 'platform/apiManagement.bicep' = {
-  name: '${varDeploymentPrefix}-apiManagement'
-  scope: resourceGroup(apimResourceGroup.name)
-
-  params: {
-    parApimName: varApimName
-    parLocation: parLocation
-  }
-}
-
 resource sqlResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: varSqlResourceGroupName
   location: parLocation
@@ -100,24 +80,22 @@ module sqlServer 'platform/sqlServer.bicep' = {
   }
 }
 
-resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' =
-  if (parEnvironment == 'prd') {
-    name: varAcrResourceGroupName
-    location: parLocation
-    tags: parTags
+resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = if (parEnvironment == 'prd') {
+  name: varAcrResourceGroupName
+  location: parLocation
+  tags: parTags
 
-    properties: {}
+  properties: {}
+}
+
+module containerRegistry 'modules/containerRegistry.bicep' = if (parEnvironment == 'prd') {
+  name: '${varDeploymentPrefix}-containerRegistry'
+  scope: resourceGroup(acrResourceGroup.name)
+
+  params: {
+    parAcrName: varAcrName
+    parLocation: parLocation
+    parAcrSku: 'Basic'
+    parTags: parTags
   }
-
-module containerRegistry 'modules/containerRegistry.bicep' =
-  if (parEnvironment == 'prd') {
-    name: '${varDeploymentPrefix}-containerRegistry'
-    scope: resourceGroup(acrResourceGroup.name)
-
-    params: {
-      parAcrName: varAcrName
-      parLocation: parLocation
-      parAcrSku: 'Basic'
-      parTags: parTags
-    }
-  }
+}
