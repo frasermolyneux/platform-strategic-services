@@ -1,25 +1,27 @@
 targetScope = 'resourceGroup'
 
 // Parameters
-param parKeyVaultName string
-param parSecretName string
+@description('The key vault resource name')
+param keyVaultName string
+
+param secretName string
 @secure()
-param parSecretValue string
-param parTags object
+param secretValue string
+param tags object
 
 // Existing In-Scope Resources
 resource keyVault 'Microsoft.KeyVault/vaults@2021-11-01-preview' existing = {
-  name: parKeyVaultName
+  name: keyVaultName
 }
 
 // Module Resources
 resource keyVaultSecret 'Microsoft.KeyVault/vaults/secrets@2021-11-01-preview' = {
-  name: parSecretName
+  name: secretName
   parent: keyVault
-  tags: parTags
+  tags: tags
 
   properties: {
     contentType: 'text/plain'
-    value: parSecretValue
+    value: secretValue
   }
 }

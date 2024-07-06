@@ -31,7 +31,7 @@ stages:
                   $config = (Get-Content $(Build.sourcesDirectory)/params/platform.${{ parameters.environmentName }}.json | ConvertFrom-Json)
 
                   $deletedKeyVaults = az keyvault list-deleted --query '[].properties.vaultId' | ConvertFrom-Json
-                  $isDeleted = $deletedKeyVaults | where {$_ -match "rg-platform-vault-${{ parameters.environmentName }}-$($config.parameters.parLocation.value)-$($config.parameters.parInstance.value)"}
+                  $isDeleted = $deletedKeyVaults | where {$_ -match "rg-platform-vault-${{ parameters.environmentName }}-$($config.parameters.location.value)-$($config.parameters.instance.value)"}
 
                   $keyVaultCreateMode = "default"
                   if ($isDeleted -ne $null) {
@@ -42,6 +42,6 @@ stages:
                   az deployment sub create `
                     --name 'strategicPlatform${{ parameters.environmentName }}' `
                     --template-file bicep/platform.bicep `
-                    --location $config.parameters.parLocation.value `
+                    --location $config.parameters.location.value `
                     --parameters @params/platform.${{ parameters.environmentName }}.json `
-                      parKeyVaultCreateMode=$keyVaultCreateMode
+                      keyVaultCreateMode=$keyVaultCreateMode

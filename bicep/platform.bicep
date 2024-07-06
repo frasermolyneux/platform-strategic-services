@@ -1,29 +1,32 @@
 targetScope = 'subscription'
 
 // Parameters
-param parEnvironment string
-param parLocation string
-param parInstance string
+@description('The environment for the resources')
+param environment string
 
-param parTags object
+@description('The location to deploy the resources')
+param location string
+param instance string
 
-param parKeyVaultCreateMode string = 'recover'
+param tags object
+
+param keyVaultCreateMode string = 'recover'
 
 // Variables
-var varEnvironmentUniqueId = uniqueString('strategic', parEnvironment, parInstance)
-var varDeploymentPrefix = 'services-${varEnvironmentUniqueId}' //Prevent deployment naming conflicts
+var environmentUniqueId = uniqueString('strategic', environment, instance)
+var varDeploymentPrefix = 'services-${environmentUniqueId}' //Prevent deployment naming conflicts
 
-var varKeyVaultResourceGroupName = 'rg-platform-vault-${parEnvironment}-${parLocation}-${parInstance}'
-var varAcrResourceGroupName = 'rg-platform-acr-${parEnvironment}-${parLocation}-${parInstance}'
+var varKeyVaultResourceGroupName = 'rg-platform-vault-${environment}-${location}-${instance}'
+var varAcrResourceGroupName = 'rg-platform-acr-${environment}-${location}-${instance}'
 
-var varKeyVaultName = 'kv-${varEnvironmentUniqueId}-${parLocation}'
-var varAcrName = 'acr${varEnvironmentUniqueId}'
+var keyVaultName = 'kv-${environmentUniqueId}-${location}'
+var varAcrName = 'acr${environmentUniqueId}'
 
 // Platform
 resource keyVaultResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = {
   name: varKeyVaultResourceGroupName
-  location: parLocation
-  tags: parTags
+  location: location
+  tags: tags
 
   properties: {}
 }
@@ -33,36 +36,36 @@ module keyVault 'modules/keyVault.bicep' = {
   scope: resourceGroup(keyVaultResourceGroup.name)
 
   params: {
-    parKeyVaultName: varKeyVaultName
-    parLocation: parLocation
+    keyVaultName: keyVaultName
+    location: location
 
-    parKeyVaultCreateMode: parKeyVaultCreateMode
-    parEnabledForDeployment: true
-    parEnabledForTemplateDeployment: true
-    parEnabledForRbacAuthorization: true
+    keyVaultCreateMode: keyVaultCreateMode
+    enabledForDeployment: true
+    enabledForTemplateDeployment: true
+    enabledForRbacAuthorization: true
 
-    parSoftDeleteRetentionInDays: 30
+    softDeleteRetentionInDays: 30
 
-    parTags: parTags
+    tags: tags
   }
 }
 
-resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = if (parEnvironment == 'prd') {
+resource acrResourceGroup 'Microsoft.Resources/resourceGroups@2021-04-01' = if (environment == 'prd') {
   name: varAcrResourceGroupName
-  location: parLocation
-  tags: parTags
+  location: location
+  tags: tags
 
   properties: {}
 }
 
-module containerRegistry 'modules/containerRegistry.bicep' = if (parEnvironment == 'prd') {
+module containerRegistry 'modules/containerRegistry.bicep' = if (environment == 'prd') {
   name: '${varDeploymentPrefix}-containerRegistry'
   scope: resourceGroup(acrResourceGroup.name)
 
   params: {
-    parAcrName: varAcrName
-    parLocation: parLocation
-    parAcrSku: 'Basic'
-    parTags: parTags
+    acrName: varAcrName
+    location: location
+    acrSku: 'Basic'
+    tags: tags
   }
 }
