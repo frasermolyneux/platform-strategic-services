@@ -30,17 +30,17 @@ jobs:
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                $config = (Get-Content ./params/platform.${{ parameters.environmentName }}.json | ConvertFrom-Json)
+                $config = (Get-Content ./params/${{ parameters.environmentName }}.json | ConvertFrom-Json)
 
                 $keyVaults = az keyvault list --query '[].id' | ConvertFrom-Json
                 $existing = $keyVaults | where {$_ -match "rg-platform-vault-${{ parameters.environmentName }}-$($config.parameters.location.value)-$($config.parameters.instance.value)"}
 
                 if ($null -ne $existing) { 
                   az deployment sub validate `
-                    --name 'strategicPlatform${{ parameters.environmentName }}' `
-                    --template-file bicep/platform.bicep `
+                    --name 'strategicServices${{ parameters.environmentName }}' `
+                    --template-file bicep/main.bicep `
                     --location $config.parameters.location.value `
-                    --parameters @params/platform.${{ parameters.environmentName }}.json `
+                    --parameters @params/${{ parameters.environmentName }}.json `
                       keyVaultCreateMode='recover'
                 }
 
@@ -51,16 +51,16 @@ jobs:
               scriptType: 'pscore'
               scriptLocation: 'inlineScript'
               inlineScript: |
-                $config = (Get-Content ./params/platform.${{ parameters.environmentName }}.json | ConvertFrom-Json)
+                $config = (Get-Content ./params/${{ parameters.environmentName }}.json | ConvertFrom-Json)
 
                 $keyVaults = az keyvault list --query '[].id' | ConvertFrom-Json
                 $existing = $keyVaults | where {$_ -match "rg-platform-vault-${{ parameters.environmentName }}-$($config.parameters.location.value)-$($config.parameters.instance.value)"}
 
                 if ($null -ne $existing) { 
                   az deployment sub what-if `
-                    --name 'strategicPlatform${{ parameters.environmentName }}' `
-                    --template-file bicep/platform.bicep `
+                    --name 'strategicServices${{ parameters.environmentName }}' `
+                    --template-file bicep/main.bicep `
                     --location $config.parameters.location.value `
-                    --parameters @params/platform.${{ parameters.environmentName }}.json `
+                    --parameters @params/${{ parameters.environmentName }}.json `
                       keyVaultCreateMode='recover'
                 }
