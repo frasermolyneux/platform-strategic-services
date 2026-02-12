@@ -23,7 +23,7 @@ This repository contains subscription-scoped Bicep templates that provision shar
 ## CI/CD workflows (GitHub Actions)
 
 - `build-and-test.yml` — Bicep lint and build on feature/bugfix/hotfix branches.
-- `pr-verify.yml` — Bicep lint, build, and what-if for dev on pull requests to `main`.
+- `pr-verify.yml` — Bicep lint, build, and what-if for dev on all pull requests.
 - `deploy-dev.yml` — manual dispatch to deploy dev environment.
 - `deploy-prd.yml` — deploys dev then prod on push to `main`, weekly schedule, or manual dispatch.
 - `codequality.yml` — security scanning (reusable workflow) and dependency review on PRs.
