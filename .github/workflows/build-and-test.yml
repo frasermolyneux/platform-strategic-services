@@ -1,0 +1,28 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+      - "feature/**"
+      - "bugfix/**"
+      - "hotfix/**"
+
+permissions: {}
+
+jobs:
+  bicep-validation:
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v6
+
+      - name: Setup Bicep CLI
+        uses: Azure/setup-bicep@v2
+
+      - name: Bicep lint
+        run: bicep lint bicep/main.bicep
+
+      - name: Bicep build
+        run: bicep build bicep/main.bicep
